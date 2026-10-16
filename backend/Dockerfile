@@ -18,7 +18,8 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
       /etc/apache2/sites-available/*.conf \
       /etc/apache2/apache2.conf \
       /etc/apache2/conf-available/*.conf \
- && a2enmod rewrite headers
+ && (a2dismod mpm_event mpm_worker >/dev/null 2>&1 || true) \
+ && a2enmod mpm_prefork rewrite headers
 
 # --- System + PHP extensions ------------------------------------------------
 # The php:8.4-apache base image is already built with mbstring, sodium and
