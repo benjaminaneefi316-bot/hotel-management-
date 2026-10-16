@@ -21,10 +21,14 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
  && a2enmod rewrite headers
 
 # --- System + PHP extensions ------------------------------------------------
+# The php:8.4-apache base image is already built with mbstring, sodium and
+# opcache enabled, and with password hashing compiled in against Argon2
+# (--with-password-argon2). `password` is therefore NOT a buildable extension
+# name (docker-php-ext-install rejects it, which aborts the build). We only
+# need to add the two extensions that are genuinely missing.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      libzip-dev libonig-dev libsodium-dev libargon2-dev default-mysql-client \
- && docker-php-ext-configure password --with-password-argon2 \
- && docker-php-ext-install pdo_mysql mbstring sodium zip opcache password \
+      libzip-dev default-mysql-client \
+ && docker-php-ext-install pdo_mysql zip \
  && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

@@ -21,6 +21,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Railway (like every PaaS) terminates TLS at its edge and forwards the
+        // original scheme in X-Forwarded-* headers. Trusting that proxy is what
+        // lets Laravel see the request as HTTPS, so generated URLs and the
+        // secure session cookie behave correctly behind the load balancer.
+        $middleware->trustProxies(at: '*');
+
         // Aliases available to routes.
         $middleware->alias([
             'active' => EnsureAccountIsActive::class,
