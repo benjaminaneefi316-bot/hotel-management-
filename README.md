@@ -13,7 +13,7 @@ A college assignment project implementing a **secure, full-stack hotel managemen
 * **configuration-only restore points** with an automated regression test, and
 * **user archiving** (soft delete) with last-active-admin protection.
 
-> **Status:** complete and tested. `php artisan test` → **48 tests / 209 assertions passing**;
+> **Status:** complete and tested. `php artisan test` → **50 tests / 220 assertions passing**;
 > `flutter test` → **10 tests passing**; `flutter analyze` → **no issues**.
 > See [`docs/`](docs/) for the full documentation set.
 
@@ -24,6 +24,8 @@ A college assignment project implementing a **secure, full-stack hotel managemen
 ```
 hotel-management/
 ├─ backend/     Laravel 13 (PHP 8.4) web application + REST API
+│  ├─ Dockerfile, railway.json   container/host scaffolding (see §7)
+│  └─ .env.production.example    production variable checklist
 ├─ mobile/      Flutter mobile application (talks to the backend API)
 ├─ docs/        Documentation and the assignment report
 ├─ tools/       Portable toolchain + local database helper scripts
@@ -44,6 +46,7 @@ hotel-management/
 | [`docs/BACKUP_RESTORE.md`](docs/BACKUP_RESTORE.md) | Backup pipeline, S3, retention, restore points |
 | [`docs/AWS_DEPLOYMENT.md`](docs/AWS_DEPLOYMENT.md) | Target cloud architecture + container/blueprint files |
 | [`docs/API.md`](docs/API.md) | Every REST endpoint, auth flow, payloads, error contract |
+| [`docs/RAILWAY_DEPLOYMENT.md`](docs/RAILWAY_DEPLOYMENT.md) | Step-by-step: put the app online on Railway with MySQL (GitHub → deploy → go live) |
 | [`docs/TESTING.md`](docs/TESTING.md) | How to run the suites; what each test proves |
 | [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md) | A step-by-step script for demonstrating the system |
 | [`docs/ASSIGNMENT_REPORT.md`](docs/ASSIGNMENT_REPORT.md) | The two-page assignment write-up |
@@ -94,7 +97,7 @@ Run the test suites:
 
 ```powershell
 cd backend
-php artisan test                 # 48 tests / 209 assertions
+php artisan test                 # 50 tests / 220 assertions
 
 cd ..\mobile
 flutter pub get
@@ -154,16 +157,21 @@ CSRF, validation, rate limiting, secure sessions and audit logging. Details in
 
 ## 7. Honest scope notes (what is verified vs. what is scaffolding)
 
-* **Verified locally.** Web app renders and serves all routes; `php artisan test` (48 tests,
-  209 assertions) and `flutter test` (10 tests) pass; `flutter analyze` is clean. The Flutter
+* **Verified locally.** Web app renders and serves all routes; `php artisan test` (50 tests,
+  220 assertions) and `flutter test` (10 tests) pass; `flutter analyze` is clean. The Flutter
   app also builds for web (`flutter build web`) and runs against the local API.
+* **Production config caching is verified.** `php artisan config:cache`, `route:cache` and
+  `view:cache` (what the container entrypoint runs on boot) all succeed against this
+  codebase, and the app serves correctly with them active — the one closure route was moved
+  into a controller for exactly this reason.
 * **AWS S3 backups are unverified end-to-end.** The pipeline is implemented with a *local
   simulation mode* that needs no AWS credentials, plus a real S3 driver used when credentials
   are present. No live AWS deployment was performed because no credentials were available.
 * **Container / cloud files are scaffolding and have not been built or run.** `backend/Dockerfile`,
   `backend/Procfile`, `backend/railway.json` and `render.yaml` are provided as a starting point;
-  Docker is not installed on this machine, so no image was built. See
-  [`docs/AWS_DEPLOYMENT.md`](docs/AWS_DEPLOYMENT.md).
+  Docker is not installed on this machine, so no image was built. The Railway walkthrough
+  ([`docs/RAILWAY_DEPLOYMENT.md`](docs/RAILWAY_DEPLOYMENT.md)) is the standard flow to follow and
+  verify on the first deploy; see also [`docs/AWS_DEPLOYMENT.md`](docs/AWS_DEPLOYMENT.md).
 * **No Android APK was produced** — this machine has no JDK or Android SDK. The `mobile/android/`
   project is present and buildable given those toolchains; the web build is used as the live demo.
 * **Restore points restore *configuration only*** (settings and role assignments), never a full

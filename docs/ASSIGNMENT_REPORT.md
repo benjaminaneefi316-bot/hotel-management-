@@ -93,11 +93,11 @@ information is used. Re-running the seeder reproduces the same deterministic dem
 
 ## 7. Testing and verification
 
-The backend suite (`php artisan test`, run against SQLite in memory) contains **14 test files**,
-**48 tests and 209 assertions**, all passing. It covers authentication and 2FA, RBAC enforcement,
+The backend suite (`php artisan test`, run against SQLite in memory) contains **13 test files**,
+**50 tests and 220 assertions**, all passing. It covers authentication and 2FA, RBAC enforcement,
 guest-data encryption, the booking/availability service, last-admin protection, the backup
-pipeline, the configuration restore round trip, the REST API, the public site and admin page
-smoke tests. Writing the tests exposed and fixed real defects, including an availability query
+pipeline, the configuration restore round trip, the REST API, the public site, admin page
+smoke tests and the guarded demo-seed command. Writing the tests exposed and fixed real defects, including an availability query
 that normalised dates incorrectly, a missing model import in one controller, and rate limiters
 that assumed a session on stateless API routes.
 

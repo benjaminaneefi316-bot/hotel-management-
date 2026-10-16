@@ -359,7 +359,7 @@ required for the marker demo.
   no-AWS simulation and a real S3 driver, and are scheduled (`backup:run`
   nightly, `backup:prune` weekly — see `php artisan schedule:list`).
 * **Everything is auditable** with a redacted, filterable audit trail.
-* **43 backend feature tests + 5 unit tests (48 total)** and **10 Flutter
+* **45 backend feature tests + 5 unit tests (50 total, 220 assertions)** and **10 Flutter
   tests** pass, plus `flutter analyze` is clean.
 
 ---

@@ -42,6 +42,10 @@ are standard AWS/ops practice (not configured by this repo) are labelled **[guid
 The repo ships `backend/railway.json`, which selects the Dockerfile builder and health
 check.
 
+> **Full step-by-step walkthrough:** [`RAILWAY_DEPLOYMENT.md`](RAILWAY_DEPLOYMENT.md)
+> (GitHub push → Railway project → MySQL → variables → deploy → take it out of testing
+> mode → scheduler → troubleshooting). The summary below is the short version.
+
 1. **Create a project** and connect the Git repository.
 2. Set the service **root directory to `backend/`** (so `Dockerfile` and `railway.json`
    resolve). Railway reads `railway.json` and builds with the Dockerfile.
@@ -51,10 +55,10 @@ check.
 3. Set the application env vars from §2 (Railway → Variables). Mark the secrets
    (`APP_KEY`, `APP_PASSWORD_PEPPER`, `APP_ENCRYPTION_KEY`, `DB_PASSWORD`, mail/AWS
    credentials) as secret.
-4. First deploy: set `RUN_MIGRATIONS=true` once so the entrypoint runs
-   `php artisan migrate --force`, then set it back to `false`.
+4. First deploy: `RUN_MIGRATIONS=true` applies migrations on boot; `RUN_SEEDERS=true`
+   seeds the demo dataset once into an empty database.
 5. Add a **scheduler** and a **worker** (see §5). Railway does not run cron for you by
-   default **[guidance]**.
+   default **[guidance]** — run `php artisan schedule:work` as a second service.
 
 Railway uses the container's `$PORT`, which the entrypoint already binds Apache to.
 
@@ -358,8 +362,17 @@ php artisan migrate --force
 
 In the Docker image this can be automated: `RUN_MIGRATIONS=true` makes
 `docker/entrypoint.sh` run `php artisan migrate --force` on boot. Use it for the first
-deploy (or a release step), then turn it off. Do **not** run `php artisan migrate:fresh`
-or `db:seed` in production — the seeders create demo accounts with a known password.
+deploy (or a release step), then turn it off.
+
+**Seeding.** The entrypoint also honours `RUN_SEEDERS=true`, which runs
+`php artisan demo:seed` — a *guarded* wrapper around `DatabaseSeeder`. It seeds **only
+when the `users` table is empty**, so it is safe to leave enabled: the first boot
+populates the demo dataset and every later boot is a no-op (`GuestSeeder` / `BookingSeeder`
+are not idempotent, which is exactly why the guard exists). Never run the raw
+`php artisan db:seed` on every boot, and never run `php artisan migrate:fresh` in
+production. Because the seeded dataset includes demo accounts with a known password, sign
+in once and change the super-admin password immediately, and remove the other demo
+accounts before a real launch. See §5 and [`RAILWAY_DEPLOYMENT.md`](RAILWAY_DEPLOYMENT.md).
 
 ### Web server document root
 
@@ -437,9 +450,11 @@ Derived from `config/security.php`, `config/hashing.php`, `config/session.php`,
 - [ ] `SESSION_ENCRYPT=true` and `SESSION_SECURE_COOKIE=true`; `APP_URL` is `https://…`.
 - [ ] `DB_*` point at a managed MySQL with a strong password (never the demo
       `hotel_app`/known creds).
-- [ ] **Do not run the seeders in production** — `UserSeeder` creates known demo accounts
-      with a shared, printed password (`SEED_DEMO_PASSWORD`, default `Password!2345`).
-      Change/remove any demo accounts.
+- [ ] **Do not leave demo data in production** — `UserSeeder` creates known demo accounts
+      with a shared, printed password (`SEED_DEMO_PASSWORD`, default `Password!2345`). The
+      guarded `demo:seed` / `RUN_SEEDERS=true` path seeds these once into an empty
+      database; sign in and change the super-admin password immediately, then
+      remove/rename the other demo accounts (`reception`, `guest`, …).
 - [ ] `HASH_DRIVER=argon2id` (the default) and confirm the host actually has Argon2id
       support in PHP (`PASSWORD_ARGON2ID`).
 - [ ] Backups: `BACKUP_DRIVER=s3`, `AWS_BACKUP_BUCKET` set, `BACKUP_ALERT_EMAIL` set so

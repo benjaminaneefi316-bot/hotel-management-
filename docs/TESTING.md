@@ -5,7 +5,7 @@ Everything below reflects the current test files in `backend/tests/` and
 `mobile/test/`, plus `backend/phpunit.xml`.
 
 > **Verified run (this checkout).**
-> * `php artisan test` in `backend/` → **48 tests, 209 assertions, all passing.**
+> * `php artisan test` in `backend/` → **50 tests, 220 assertions, all passing.**
 > * `flutter test` in `mobile/` → **10 tests, all passing.**
 > * `flutter analyze` in `mobile/` → **no issues found.**
 
@@ -123,8 +123,9 @@ Backend tests are split into `tests/Unit` and `tests/Feature` (see the
 | `tests/Feature/ApiTest.php` | 7 | The REST API used by Flutter: public `/api/health` and `/api/room-types`; two-step login returning a mobile bearer token; bad credentials `401`; unauthenticated request `401`; a guest token is forbidden from staff endpoints; a staff token is allowed; an **archived** account's existing bearer token is refused (`403`). |
 | `tests/Feature/AdminPagesSmokeTest.php` | 2 | Renders **every** authenticated page as an administrator (all HTTP 200), and every guest page as a guest account (all HTTP 200). Catches broken Blade views, missing controller variables and bad eager-loading. |
 | `tests/Feature/PublicSiteTest.php` | 3 | Public marketing site: home renders, accommodation index and detail pages render, and the login page renders. |
+| `tests/Feature/DemoSeedCommandTest.php` | 2 | The guarded `demo:seed` command used by the container's `RUN_SEEDERS=true`: it seeds roles, the super admin and 50+ guests/bookings into an **empty** database, and it is a no-op (no duplicate guests/users) when the database already has users. |
 
-Totals: **48 tests** (5 in `tests/Unit`, 43 in `tests/Feature`).
+Totals: **50 tests** (5 in `tests/Unit`, 45 in `tests/Feature`), **220 assertions**.
 
 ---
 

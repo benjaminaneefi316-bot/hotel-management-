@@ -151,8 +151,17 @@ php artisan migrate --force
 php artisan db:seed --force
 ```
 
-The seeders are repeatable: running them again updates the demo accounts in place
-instead of duplicating them. The shared demo password is printed by the seeder.
+What re-running does, seeder by seeder:
+
+- **Roles, room types, rooms, system settings and the demo accounts** are upserted
+  (`firstOrNew` / `updateOrCreate`), so running `db:seed` again refreshes them in place.
+- **Guests, bookings and audit-log entries are appended**: `GuestSeeder` creates 60
+  guests, `BookingSeeder` creates up to 80 bookings and `AuditLogSeeder` adds sample log
+  rows *every* run, so repeatedly seeding grows those tables. Use
+  `php artisan migrate:fresh --seed` for a clean, fully-reset database rather than
+  stacking seeds.
+
+The shared demo password is printed by the seeder.
 
 ---
 
