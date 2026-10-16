@@ -1,0 +1,15 @@
+# Lints for the Azure Bay mobile client.
+#
+# Run `flutter analyze` to check the project against these rules.
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - web/**
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    prefer_const_constructors: true
+    prefer_final_locals: true
+    avoid_print: true

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="560" viewBox="0 0 800 560" role="img" aria-label="Image unavailable">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#323f4b"/>
+      <stop offset="1" stop-color="#1f2933"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="560" fill="url(#g)"/>
+  <g fill="none" stroke="#c9a227" stroke-width="3" opacity="0.85">
+    <rect x="300" y="220" width="200" height="130" rx="12"/>
+    <path d="M330 220 v-30 h140 v30"/>
+    <circle cx="400" cy="285" r="26"/>
+  </g>
+  <text x="400" y="400" text-anchor="middle" fill="#e0c76a" font-family="Georgia, serif" font-size="26">Azure Bay Hotel</text>
+</svg>

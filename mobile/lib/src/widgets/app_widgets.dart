@@ -1,0 +1,298 @@
+import 'package:flutter/material.dart';
+
+import '../theme/app_theme.dart';
+
+/// A styled text field matching the app's panel look.
+class AppTextField extends StatelessWidget {
+  const AppTextField({
+    super.key,
+    required this.controller,
+    required this.label,
+    this.hint,
+    this.keyboardType,
+    this.obscureText = false,
+    this.prefixIcon,
+    this.validator,
+    this.textInputAction,
+    this.onSubmitted,
+    this.maxLines = 1,
+    this.enabled = true,
+  });
+
+  final TextEditingController controller;
+  final String label;
+  final String? hint;
+  final TextInputType? keyboardType;
+  final bool obscureText;
+  final IconData? prefixIcon;
+  final String? Function(String?)? validator;
+  final TextInputAction? textInputAction;
+  final void Function(String)? onSubmitted;
+  final int maxLines;
+  final bool enabled;
+
+  OutlineInputBorder _border(Color color) => OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: color),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      obscureText: obscureText,
+      enabled: enabled,
+      maxLines: maxLines,
+      textInputAction: textInputAction,
+      onFieldSubmitted: onSubmitted,
+      validator: validator,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        filled: true,
+        fillColor: Colors.white,
+        prefixIcon: prefixIcon == null ? null : Icon(prefixIcon, size: 20),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        border: _border(AppTheme.line),
+        enabledBorder: _border(AppTheme.line),
+        focusedBorder: _border(AppTheme.navy),
+        errorBorder: _border(Colors.red.shade400),
+        focusedErrorBorder: _border(Colors.red.shade400),
+      ),
+    );
+  }
+}
+
+/// White rounded panel used to group content.
+class Panel extends StatelessWidget {
+  const Panel({super.key, required this.child, this.padding});
+
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: AppTheme.panel(),
+      padding: padding ?? const EdgeInsets.all(16),
+      child: child,
+    );
+  }
+}
+
+/// Network image with lazy loading and a graceful fallback.
+///
+/// Never shows a broken-image icon: while loading it shows a shimmer-style
+/// placeholder, and if the URL is missing or fails it shows a branded tile.
+class RemoteImage extends StatelessWidget {
+  const RemoteImage({
+    super.key,
+    required this.url,
+    this.height,
+    this.width,
+    this.fit = BoxFit.cover,
+  });
+
+  final String? url;
+  final double? height;
+  final double? width;
+  final BoxFit fit;
+
+  @override
+  Widget build(BuildContext context) {
+    final source = url;
+    if (source == null || source.isEmpty) {
+      return _fallback();
+    }
+
+    return Image.network(
+      source,
+      height: height,
+      width: width,
+      fit: fit,
+      loadingBuilder: (context, child, progress) {
+        if (progress == null) {
+          return child;
+        }
+        return _placeholder();
+      },
+      errorBuilder: (context, error, stackTrace) => _fallback(),
+    );
+  }
+
+  Widget _placeholder() {
+    return Container(
+      height: height,
+      width: width,
+      color: const Color(0xFFEDE7DC),
+      alignment: Alignment.center,
+      child: const SizedBox(
+        height: 22,
+        width: 22,
+        child: CircularProgressIndicator(strokeWidth: 2),
+      ),
+    );
+  }
+
+  Widget _fallback() {
+    return Container(
+      height: height,
+      width: width,
+      color: AppTheme.navySoft,
+      alignment: Alignment.center,
+      child: const Icon(Icons.hotel_outlined, color: Colors.white54, size: 34),
+    );
+  }
+}
+
+/// A small rounded label used for booking and room statuses.
+class StatusPill extends StatelessWidget {
+  const StatusPill({super.key, required this.label, required this.color});
+
+  final String label;
+  final Color color;
+
+  static Color colorFor(String status) {
+    switch (status) {
+      case 'confirmed':
+      case 'available':
+        return const Color(0xFF1E8E5A);
+      case 'pending':
+      case 'cleaning':
+        return const Color(0xFFB7791F);
+      case 'checked_in':
+      case 'occupied':
+        return AppTheme.navy;
+      case 'checked_out':
+        return AppTheme.muted;
+      case 'cancelled':
+      case 'out_of_service':
+      case 'maintenance':
+        return const Color(0xFFB23A48);
+      default:
+        return AppTheme.muted;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withAlpha(30),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withAlpha(90)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+/// A single KPI figure for the staff dashboard.
+class KpiTile extends StatelessWidget {
+  const KpiTile({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
+
+  final String label;
+  final String value;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Panel(
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: AppTheme.gold, size: 22),
+          const SizedBox(height: 10),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.navy,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 12, color: AppTheme.muted),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Full-screen friendly message with an optional retry action.
+class EmptyState extends StatelessWidget {
+  const EmptyState({
+    super.key,
+    required this.icon,
+    required this.title,
+    this.message,
+    this.onRetry,
+    this.retryLabel = 'Try again',
+  });
+
+  final IconData icon;
+  final String title;
+  final String? message;
+  final VoidCallback? onRetry;
+  final String retryLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 48, color: AppTheme.gold),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.navy,
+              ),
+            ),
+            if (message != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                message!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppTheme.muted),
+              ),
+            ],
+            if (onRetry != null) ...[
+              const SizedBox(height: 20),
+              OutlinedButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh, size: 18),
+                label: Text(retryLabel),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -1,0 +1,54 @@
+# Render blueprint for the Secure Hotel Management System API.
+#
+# Deploy: create a new Blueprint on Render and point it at this repository,
+# then fill in the secret environment variables (they are marked sync: false).
+#
+# NOTE: this file is deployment scaffolding; it was written but not executed on
+# the development machine. Verify the plan on Render before relying on it.
+services:
+  - type: web
+    name: hotel-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: starter
+    healthCheckPath: /up
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        sync: false
+      - key: APP_KEY
+        sync: false
+      - key: APP_PASSWORD_PEPPER
+        sync: false
+      - key: APP_ENCRYPTION_KEY
+        sync: false
+      - key: TWO_FACTOR_EXPOSE_CODE
+        value: "false"
+      # This application targets MySQL/MariaDB. Render's managed databases are
+      # PostgreSQL, so point these at an external managed MySQL instance (or a
+      # Render Postgres only after adapting the migrations/schema).
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: BACKUP_DRIVER
+        value: local
+      - key: MAIL_MAILER
+        sync: false
+      - key: MAIL_FROM_ADDRESS
+        sync: false
+
+# No `databases:` block: Render provisions managed PostgreSQL, whereas this app
+# targets MySQL/MariaDB. Supply an external MySQL via the DB_* env vars above.

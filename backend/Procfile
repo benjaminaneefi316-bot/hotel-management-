@@ -1,0 +1,4 @@
+# Procfile - used by buildpack-based hosts (Render, Heroku, Dokku).
+#
+# If you deploy with the bundled Dockerfile instead, this file is ignored.
+web: vendor/bin/heroku-php-apache2 public/

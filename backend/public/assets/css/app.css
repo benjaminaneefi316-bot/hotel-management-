@@ -1,0 +1,277 @@
+/* ==========================================================================
+   Azure Bay Hotel — design system
+   Bootstrap 5 is loaded from a CDN; this file adds the premium hospitality
+   look (palette, serif display headings, soft shadows, card lift).
+   ========================================================================== */
+
+:root {
+    --ab-charcoal: #1f2933;
+    --ab-slate: #323f4b;
+    --ab-sand: #f5f3ef;
+    --ab-ivory: #faf8f4;
+    --ab-gold: #c9a227;
+    --ab-gold-soft: #e0c76a;
+    --ab-text: #2b2b2b;
+    --ab-muted: #6b7280;
+    --ab-border: #e7e2d8;
+    --ab-shadow: 0 8px 30px rgba(0, 0, 0, .08);
+    --ab-shadow-lg: 0 18px 50px rgba(0, 0, 0, .14);
+    --ab-radius: 14px;
+    --ab-radius-sm: 10px;
+    --ab-font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --ab-font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ---------------------------------------------------------------- Base ---- */
+body {
+    font-family: var(--ab-font-body);
+    color: var(--ab-text);
+    background-color: var(--ab-sand);
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, .display-serif {
+    font-family: var(--ab-font-display);
+    letter-spacing: .2px;
+}
+
+a { text-decoration: none; }
+
+.text-muted-soft { color: var(--ab-muted) !important; }
+.bg-sand { background-color: var(--ab-sand) !important; }
+.bg-ivory { background-color: var(--ab-ivory) !important; }
+.bg-charcoal { background-color: var(--ab-charcoal) !important; }
+.bg-slate { background-color: var(--ab-slate) !important; }
+
+.text-gold { color: var(--ab-gold) !important; }
+.bg-gold { background-color: var(--ab-gold) !important; }
+.border-gold { border-color: var(--ab-gold) !important; }
+
+.section { padding: 4.5rem 0; }
+.section-sm { padding: 2.75rem 0; }
+
+.eyebrow {
+    text-transform: uppercase;
+    letter-spacing: .22em;
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--ab-gold);
+}
+
+/* -------------------------------------------------------------- Buttons --- */
+.btn { border-radius: 999px; font-weight: 600; letter-spacing: .2px; }
+.btn-gold {
+    background-color: var(--ab-gold);
+    border-color: var(--ab-gold);
+    color: #1f2933;
+}
+.btn-gold:hover { background-color: var(--ab-gold-soft); border-color: var(--ab-gold-soft); color: #1f2933; }
+.btn-outline-gold { border-color: var(--ab-gold); color: var(--ab-gold); }
+.btn-outline-gold:hover { background-color: var(--ab-gold); color: #1f2933; }
+.btn-charcoal { background-color: var(--ab-charcoal); border-color: var(--ab-charcoal); color: #fff; }
+.btn-charcoal:hover { background-color: var(--ab-slate); border-color: var(--ab-slate); color: #fff; }
+.btn-soft { background: #fff; border: 1px solid var(--ab-border); color: var(--ab-text); }
+.btn-soft:hover { background: var(--ab-ivory); border-color: var(--ab-gold); color: var(--ab-text); }
+
+/* ---------------------------------------------------------------- Cards ---- */
+.card {
+    border: 1px solid var(--ab-border);
+    border-radius: var(--ab-radius);
+    box-shadow: var(--ab-shadow);
+    background: #fff;
+}
+.card-hover { transition: transform .28s ease, box-shadow .28s ease; }
+.card-hover:hover { transform: translateY(-6px); box-shadow: var(--ab-shadow-lg); }
+
+.kpi-card { border-left: 4px solid var(--ab-gold); }
+.kpi-value { font-family: var(--ab-font-display); font-size: 2rem; line-height: 1; }
+.kpi-label { text-transform: uppercase; letter-spacing: .12em; font-size: .68rem; color: var(--ab-muted); font-weight: 600; }
+
+/* ---------------------------------------------------------------- Hero ----- */
+.hero {
+    position: relative;
+    min-height: 88vh;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    background-size: cover;
+    background-position: center;
+}
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(31, 41, 51, .72) 0%, rgba(31, 41, 51, .45) 45%, rgba(31, 41, 51, .82) 100%);
+}
+.hero > .container { position: relative; z-index: 2; }
+.hero h1 { font-size: clamp(2.4rem, 5vw, 4.2rem); font-weight: 700; }
+.hero .lead { color: rgba(255, 255, 255, .88); max-width: 46rem; }
+
+.page-hero {
+    position: relative;
+    color: #fff;
+    background-size: cover;
+    background-position: center;
+    padding: 6rem 0 4rem;
+}
+.page-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(31, 41, 51, .70), rgba(31, 41, 51, .55));
+}
+.page-hero > .container { position: relative; z-index: 2; }
+
+/* ----------------------------------------------------- Booking search bar -- */
+.search-card {
+    background: rgba(255, 255, 255, .97);
+    border-radius: var(--ab-radius);
+    box-shadow: var(--ab-shadow-lg);
+    padding: 1.25rem;
+    backdrop-filter: blur(6px);
+}
+.search-card .form-label { font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ab-muted); font-weight: 600; }
+
+/* -------------------------------------------------------------- Media ------ */
+.media-cover { width: 100%; height: 100%; object-fit: cover; display: block; }
+.room-card-img { height: 230px; object-fit: cover; width: 100%; }
+.gallery-item { position: relative; overflow: hidden; border-radius: var(--ab-radius-sm); }
+.gallery-item img { transition: transform .5s ease; height: 260px; width: 100%; object-fit: cover; }
+.gallery-item:hover img { transform: scale(1.06); }
+
+.avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--ab-slate); color: #fff; font-weight: 600; font-size: .85rem;
+}
+.avatar-lg { width: 64px; height: 64px; font-size: 1.3rem; }
+
+/* -------------------------------------------------------------- Tables ----- */
+.table thead th {
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-size: .68rem;
+    color: var(--ab-muted);
+    border-bottom: 1px solid var(--ab-border);
+    white-space: nowrap;
+}
+.table td { vertical-align: middle; }
+.table-card { overflow: hidden; border-radius: var(--ab-radius); }
+
+/* ---------------------------------------------------------------- Badges --- */
+.badge-soft { font-weight: 600; letter-spacing: .02em; padding: .38em .7em; border-radius: 999px; }
+.badge-soft-success { background: #e6f4ea; color: #1e7a3d; }
+.badge-soft-warning { background: #fdf3e0; color: #9a6b12; }
+.badge-soft-danger { background: #fbe9e9; color: #a12828; }
+.badge-soft-info { background: #e7f0fb; color: #1f5f9e; }
+.badge-soft-neutral { background: #eef0f2; color: #4b5563; }
+.badge-soft-gold { background: #f7efd6; color: #8a6d12; }
+
+/* ------------------------------------------------------- App shell --------- */
+.app-shell { min-height: 100vh; display: flex; }
+
+.sidebar {
+    width: 264px;
+    flex: 0 0 264px;
+    background: var(--ab-charcoal);
+    color: rgba(255, 255, 255, .82);
+    min-height: 100vh;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    max-height: 100vh;
+    overflow-y: auto;
+}
+.sidebar .brand {
+    font-family: var(--ab-font-display);
+    color: #fff;
+    font-size: 1.3rem;
+    letter-spacing: .5px;
+}
+.sidebar .nav-link {
+    color: rgba(255, 255, 255, .74);
+    border-radius: var(--ab-radius-sm);
+    padding: .55rem .8rem;
+    margin-bottom: .12rem;
+    font-size: .92rem;
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+}
+.sidebar .nav-link:hover { background: rgba(255, 255, 255, .08); color: #fff; }
+.sidebar .nav-link.active { background: var(--ab-gold); color: #1f2933; font-weight: 600; }
+.sidebar .nav-heading {
+    text-transform: uppercase;
+    letter-spacing: .18em;
+    font-size: .62rem;
+    color: rgba(255, 255, 255, .42);
+    margin: 1.1rem .8rem .35rem;
+}
+
+.app-main { flex: 1 1 auto; min-width: 0; background: var(--ab-sand); }
+
+.topbar {
+    background: #fff;
+    border-bottom: 1px solid var(--ab-border);
+    padding: .85rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+.app-content { padding: 1.75rem 1.5rem 3rem; }
+
+/* ------------------------------------------------------- Auth layout ------- */
+.auth-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        linear-gradient(rgba(31, 41, 51, .78), rgba(31, 41, 51, .86)),
+        url('https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+    padding: 2rem 1rem;
+}
+.auth-card {
+    width: 100%;
+    max-width: 440px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: var(--ab-shadow-lg);
+    padding: 2.25rem;
+}
+.otp-input letter-spacing: .5em;
+
+/* ------------------------------------------------------- Footer ------------ */
+.site-footer { background: var(--ab-charcoal); color: rgba(255, 255, 255, .72); }
+.site-footer h6 { color: #fff; text-transform: uppercase; letter-spacing: .14em; font-size: .72rem; }
+.site-footer a { color: rgba(255, 255, 255, .72); }
+.site-footer a:hover { color: var(--ab-gold-soft); }
+.footer-map { border: 1px solid rgba(255, 255, 255, .18); border-radius: var(--ab-radius-sm); overflow: hidden; }
+.footer-map iframe { border: 0; filter: grayscale(1) contrast(1.05); }
+
+.cta-band {
+    background: linear-gradient(120deg, var(--ab-charcoal) 0%, var(--ab-slate) 100%);
+    color: #fff;
+    border-radius: var(--ab-radius);
+    padding: 3rem;
+}
+
+/* ------------------------------------------------------- Utilities -------- */
+.divider-gold { width: 64px; height: 3px; background: var(--ab-gold); border-radius: 3px; }
+.stat-chip { background: var(--ab-ivory); border: 1px solid var(--ab-border); border-radius: var(--ab-radius-sm); padding: .6rem .85rem; }
+.icon-circle {
+    width: 54px; height: 54px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--ab-ivory); color: var(--ab-gold); font-size: 1.4rem;
+    border: 1px solid var(--ab-border);
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--ab-gold-soft);
+    box-shadow: 0 0 0 .2rem rgba(201, 162, 39, .18);
+}
+.form-control, .form-select { border-radius: var(--ab-radius-sm); }
+
+@media (max-width: 991.98px) {
+    .app-shell { flex-direction: column; }
+    .sidebar { position: static; width: 100%; flex: 1 1 auto; max-height: none; min-height: auto; }
+}

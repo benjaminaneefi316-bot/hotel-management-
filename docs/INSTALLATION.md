@@ -1,0 +1,279 @@
+# Installation Guide
+
+This guide installs and runs the **Secure Hotel Management System** on a Windows
+machine. It covers the web application (Laravel), the database (MariaDB/MySQL),
+the REST API, and the Flutter mobile application.
+
+Everything here was executed during the build of this project. Commands are written
+for **PowerShell**.
+
+---
+
+## 1. What you are installing
+
+| Piece | Folder | Runs on |
+| --- | --- | --- |
+| Web application + REST API | `backend/` | PHP 8.3+ (developed on PHP 8.4) |
+| Database | (server) | MySQL 8 or MariaDB 10.6+ |
+| Mobile application | `mobile/` | Flutter 3.x (Dart 3) |
+
+The web app and the API are the *same* Laravel application: the browser uses
+session cookies, the mobile app uses Sanctum bearer tokens, and both share the
+same business logic and security rules.
+
+---
+
+## 2. Requirements
+
+* **PHP 8.3 or newer** with the `pdo_mysql`, `mbstring`, `openssl`, `sodium`, `fileinfo` extensions.
+  Argon2id support is required for password hashing (`defined('PASSWORD_ARGON2ID')` must be `true`).
+- **Composer 2**
+- **MySQL 8** or **MariaDB 10.6+**
+- **Flutter 3.16+** (Dart 3) with the Android toolchain (or Chrome for the web build)
+- **Node.js** is **not** required to run the app (no front-end build step is needed);
+  the CSS/JS are plain files under `backend/public/`.
+
+> This build used a **portable, administrator-free** toolchain installed under
+> `C:\Users\CHARMIES\tools`. If you use it, dot-source the helper first; if you have
+> a normal install, just make sure `php`, `composer` and `flutter` are on your `PATH`.
+
+```powershell
+# From the repository root - puts the portable tools on the PATH for this window
+. .\tools\set-env.ps1
+```
+
+---
+
+## 2a. One-time setup of the portable MariaDB (portable toolchain only)
+
+If you use a normal MySQL/MariaDB installation you can skip this section and just
+create a database and user.
+
+The portable server uses:
+
+| Setting | Value |
+| --- | --- |
+| Base folder | `C:\Users\CHARMIES\tools\mariadb` |
+| Config file | `C:\Users\CHARMIES\tools\my.ini` |
+| Data directory | `C:\Users\CHARMIES\tools\mariadb-data` |
+| Port | `3307` |
+
+Initialise the data directory **once**:
+
+```powershell
+& "C:\Users\CHARMIES\tools\mariadb\bin\mariadb-install-db.exe" --defaults-file="C:\Users\CHARMIES\tools\my.ini"
+```
+
+Start and stop it at any time with the helper scripts:
+
+```powershell
+.\tools\start-db.ps1      # waits until port 3307 accepts connections
+.\tools\stop-db.ps1       # clean shutdown when permitted, otherwise stops the process
+```
+
+Create the database and an application user (run inside the MariaDB client):
+
+```powershell
+& "C:\Users\CHARMIES\tools\mariadb\bin\mariadb.exe" --defaults-file="C:\Users\CHARMIES\tools\my.ini" -u root -p
+```
+
+```sql
+CREATE DATABASE hotel_management CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'hotel_app'@'127.0.0.1' IDENTIFIED BY '<choose-a-strong-password>';
+GRANT ALL PRIVILEGES ON hotel_management.* TO 'hotel_app'@'127.0.0.1';
+FLUSH PRIVILEGES;
+```
+
+---
+
+## 2b. Mobile toolchain (Flutter)
+
+The Flutter SDK used for this project lives at `C:\Users\CHARMIES\tools\flutter`.
+The `.bat` launcher is `C:\Users\CHARMIES\tools\flutter\bin\flutter.bat`.
+
+The Android platform folder is checked in, but building an **APK** additionally
+requires the **JDK + Android SDK**, which are *not* part of this repository. You can
+still:
+
+* run `flutter analyze` and `flutter test` (no device needed);
+* build the **web** version (`flutter build web`) and view it in a browser;
+* build a real APK once you install Android Studio / the Android SDK.
+
+---
+
+## 3. Configure the backend
+
+From the `backend/` folder:
+
+```powershell
+cd backend
+
+# 1. Install PHP dependencies
+composer install
+
+# 2. Create your environment file
+Copy-Item .env.example .env
+
+# 3. Generate an application key AND the two non-committable secrets
+php artisan key:generate
+php artisan security:generate-secrets --write
+```
+
+`security:generate-secrets --write` creates and stores:
+
+* `APP_PASSWORD_PEPPER` - the application-wide password pepper (never in the database).
+* `APP_ENCRYPTION_KEY` - the AES-256-GCM key that protects encrypted guest fields.
+
+Now edit `.env` and point the database settings at your server:
+
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3307        # 3306 for a standard MySQL install
+DB_DATABASE=hotel_management
+DB_USERNAME=hotel_app
+DB_PASSWORD=<your-password>
+```
+
+> Locally, `MAIL_MAILER=log` and `TWO_FACTOR_EXPOSE_CODE=true` are convenient: the
+> OTP is written to `backend/storage/logs/laravel.log` **and** shown on the 2FA
+> screen. **Both must be changed for any real deployment** (see `docs/SECURITY.md`).
+
+---
+
+## 4. Create the schema and seed demo data
+
+```powershell
+php artisan migrate --force
+
+# Seed the reference data, demo accounts and fictional data
+# (>= 50 guests and >= 50 bookings, generated by factories).
+php artisan db:seed --force
+```
+
+The seeders are repeatable: running them again updates the demo accounts in place
+instead of duplicating them. The shared demo password is printed by the seeder.
+
+---
+
+## 5. Run the web application
+
+```powershell
+php artisan serve
+```
+
+Open <http://127.0.0.1:8000>.
+
+For a realistic development loop (server + queue + log viewer) Laravel
+`pail` is available, or simply use `php artisan serve` on its own.
+
+### Backups and the scheduler
+
+`routes/console.php` defines the scheduled tasks: `backup:run` (daily at 02:30),
+`backup:prune` (weekly) and `otp:prune` (hourly). List them, run the scheduler in the
+foreground, or fire the backup immediately:
+
+```powershell
+php artisan schedule:list      # show what is scheduled and when it is next due
+php artisan schedule:work      # runs the scheduler in the foreground
+php artisan backup:run         # take a backup now
+```
+
+Locally, `BACKUP_DRIVER=local` writes encrypted dumps under the configured disk
+path, so **no AWS account is required** to demonstrate the backup pipeline.
+
+---
+
+## 6. Demo accounts
+
+Seeded by `database/seeders/UserSeeder.php`. The shared password is
+`Password!2345` unless `SEED_DEMO_PASSWORD` overrides it.
+
+| Username | Email | Role | 2FA |
+| --- | --- | --- | --- |
+| `admin` | `benjaminaneefi316@gmail.com` | Administrator (super admin) | on |
+| `reception` | `reception@azurebay.test` | Receptionist | on |
+| `reception2` | `sofia@azurebay.test` | Receptionist | on |
+| `guest` | `guest@azurebay.test` | Guest | on |
+| `guest2` | `mei@azurebay.test` | Guest | off |
+
+The super admin's phone number is `0539460356`. **Change this password immediately
+on any non-demo deployment.**
+
+---
+
+## 7. Run the mobile application
+
+From the `mobile/` folder:
+
+```powershell
+# Resolve packages once
+flutter pub get
+
+# Static checks and unit/widget tests (no device needed)
+flutter analyze
+flutter test
+
+# Run on the Android emulator (10.0.2.2 is how the emulator reaches your PC)
+flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api
+
+# Run on a physical device on the same Wi-Fi (use your PC's LAN IP)
+flutter run --dart-define=API_BASE_URL=http://192.168.1.50:8000/api
+
+# Build an APK (requires the JDK + Android SDK)
+flutter build apk --release --dart-define=API_BASE_URL=https://your-api.example/api
+```
+
+The API base URL is compiled in with `--dart-define`; the default is
+`http://10.0.2.2:8000/api`, which suits the Android emulator.
+
+For a quick browser demo of the mobile UI:
+
+```powershell
+flutter build web --release --dart-define=API_BASE_URL=http://127.0.0.1:8000/api
+# then serve mobile/build/web with any static file server
+```
+
+---
+
+## 8. Run the tests
+
+```powershell
+# Backend (from backend/)
+php artisan test
+
+# Mobile (from mobile/)
+flutter test
+```
+
+The backend suite runs against an in-memory SQLite database and an array mailer, so
+it never touches your MySQL data or sends real email. See `docs/TESTING.md`.
+
+---
+
+## 9. Production / hosting
+
+See `docs/AWS_DEPLOYMENT.md` for deploying the API to a managed host
+(Railway / Render) or a VPS, wiring up a managed MySQL database, the scheduler,
+and the least-privilege S3 backup role. The short version:
+
+1. Set `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://your-domain`.
+2. Provide real `APP_KEY`, `APP_PASSWORD_PEPPER`, `APP_ENCRYPTION_KEY`.
+3. Set `TWO_FACTOR_EXPOSE_CODE=false` and configure a real mailer for OTPs.
+4. Point `DB_*` at your managed database.
+5. Run `php artisan migrate --force` and the scheduler/cron.
+6. Serve with the web root set to `backend/public`.
+
+---
+
+## 10. Troubleshooting
+
+| Symptom | Fix |
+| --- | --- |
+| "could not find driver" | Enable `pdo_mysql` in `php.ini`. |
+| Port 3307 refused | `.\tools\start-db.ps1` (see the data dir's `error.log`). |
+| "No application encryption key" | `php artisan key:generate`. |
+| "APP_PASSWORD_PEPPER missing" | `php artisan security:generate-secrets --write`. |
+| Login loops back to the 2FA page | The account has 2FA on; in local dev set `TWO_FACTOR_EXPOSE_CODE=true` to see the code on screen. |
+| Mobile app cannot reach the API | Use the emulator address `10.0.2.2` (not `127.0.0.1`) or your PC's LAN IP. |
+| Stale config after editing `.env` | `php artisan optimize:clear`. |

@@ -1,0 +1,39 @@
+# ---------------------------------------------------------------------------
+# Line-ending policy for the Secure Hotel Management System.
+#
+# The repository stores text files with LF. Windows checkouts are allowed their
+# native CRLF, EXCEPT for the files that must stay LF even on Windows:
+#
+#   * shell scripts run inside the Linux container — a "#!...\r" shebang makes
+#     the kernel look for an interpreter named "bash\r" and the container fails
+#     to start;
+#   * Dockerfiles and YAML/JSON read by the build tooling.
+# ---------------------------------------------------------------------------
+
+* text=auto
+
+# Always LF (these run on Linux in the container / build tools)
+*.sh            text eol=lf
+Dockerfile      text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+
+# Windows-native scripts and metadata
+*.ps1           text eol=crlf
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+
+# Binary assets — never touch
+*.jpg           binary
+*.jpeg          binary
+*.png           binary
+*.gif           binary
+*.webp          binary
+*.ico           binary
+*.ttf           binary
+*.otf           binary
+*.woff          binary
+*.woff2         binary
+*.zip           binary
+*.gz            binary
+*.pdf           binary
