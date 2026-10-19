@@ -7,6 +7,7 @@ use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\TwoFactorController;
+use App\Http\Controllers\Auth\TwoFactorSetupController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
@@ -95,6 +96,15 @@ Route::middleware(['auth', 'active'])->group(function (): void {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'password'])->name('profile.password');
+
+    // --- Authenticator app (TOTP) enrolment -----------------------------------
+    Route::get('/profile/two-factor', [TwoFactorSetupController::class, 'create'])
+        ->name('two-factor.setup');
+    Route::post('/profile/two-factor', [TwoFactorSetupController::class, 'confirm'])
+        ->middleware('throttle:two-factor')
+        ->name('two-factor.confirm');
+    Route::delete('/profile/two-factor', [TwoFactorSetupController::class, 'destroy'])
+        ->name('two-factor.remove');
 
     // --- Guest self-service portal -------------------------------------------
     Route::middleware('can:access-guest-area')->prefix('guest')->name('guest.')->group(function (): void {

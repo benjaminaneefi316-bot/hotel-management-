@@ -20,8 +20,17 @@ class TwoFactorController extends Controller
     public function show(Request $request): View
     {
         $devCode = $request->session()->pull('two_factor.dev_code');
+        $user = $this->pendingUser($request);
 
-        return view('auth.two-factor', ['devCode' => $devCode]);
+        // Which second factor this account actually uses: the code generated
+        // by the authenticator app, or the one we emailed.
+        $channel = $user?->usesAuthenticatorApp() ? 'app' : 'email';
+
+        return view('auth.two-factor', [
+            'devCode' => $devCode,
+            'channel' => $channel,
+            'canResend' => $channel === 'email',
+        ]);
     }
 
     /**

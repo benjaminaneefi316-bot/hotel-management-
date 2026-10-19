@@ -63,6 +63,9 @@ final class ApiAuthController extends ApiController
             'challenge_token' => $user->createToken('2fa-challenge', ['2fa:challenge'], now()->addMinutes(10))->plainTextToken,
             'expires_in' => 600,
             'email' => $user->email,
+            // 'app'  = read the code off the authenticator app,
+            // 'email' = we just emailed it (unchanged legacy behaviour).
+            'channel' => $challenge['channel'],
         ];
 
         if ($challenge['dev_code'] !== null) {
@@ -125,7 +128,13 @@ final class ApiAuthController extends ApiController
             return $this->fail('Two-factor authentication is not enabled for this account.', 400, '2fa_disabled');
         }
 
-        $payload = ['status' => 'sent'];
+        // Authenticator-app accounts generate the code locally: there is
+        // nothing to resend, and saying "sent" would be a lie.
+        if ($challenge['channel'] === 'app') {
+            return $this->ok(['status' => 'app_challenge', 'channel' => 'app']);
+        }
+
+        $payload = ['status' => 'sent', 'channel' => 'email'];
 
         if ($challenge['dev_code'] !== null) {
             $payload['dev_code'] = $challenge['dev_code'];

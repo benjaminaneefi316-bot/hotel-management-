@@ -10,6 +10,7 @@ class LoginResult {
     this.challengeToken,
     this.email,
     this.devCode,
+    this.channel = 'email',
   });
 
   /// When false the account has 2FA disabled and is already signed in.
@@ -20,6 +21,17 @@ class LoginResult {
   /// Only populated by the backend when `TWO_FACTOR_EXPOSE_CODE=true`
   /// (local development / demo). Never present in production.
   final String? devCode;
+
+  /// Where the second-factor code comes from:
+  ///   'app'   -> the authenticator app on the phone generates it,
+  ///   'email' -> the backend emailed it (legacy / not yet enrolled).
+  ///
+  /// The backend always sends this; 'email' is the fallback for older servers.
+  final String channel;
+
+  /// True when the user must read the code off their authenticator app
+  /// instead of waiting for an email.
+  bool get usesAuthenticatorApp => channel == 'app';
 }
 
 /// Wraps the `/auth/*` endpoints and persists the bearer token securely.
@@ -58,6 +70,7 @@ class AuthRepository {
       challengeToken: response['challenge_token'] as String?,
       email: response['email'] as String?,
       devCode: response['dev_code'] as String?,
+      channel: response['channel'] as String? ?? 'email',
     );
   }
 

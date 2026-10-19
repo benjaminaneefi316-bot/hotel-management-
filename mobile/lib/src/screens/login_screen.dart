@@ -151,7 +151,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'A one-time code is emailed to you as a second factor.',
+                    'A second sign-in step protects your account: either the '
+                    'code from your authenticator app, or a one-time code '
+                    'by email.',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: AppTheme.muted, fontSize: 12),
                   ),

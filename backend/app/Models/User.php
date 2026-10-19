@@ -51,6 +51,7 @@ class User extends Authenticatable
         'password',
         'password_salt',
         'remember_token',
+        'two_factor_secret',
     ];
 
     protected function casts(): array
@@ -59,8 +60,30 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
             'two_factor_enabled' => 'boolean',
+            'two_factor_confirmed_at' => 'datetime',
+            // The authenticator-app shared secret is AES-256-GCM encrypted in
+            // the database, so a stolen dump alone cannot generate codes.
+            'two_factor_secret' => 'encrypted',
             'status' => UserStatus::class,
         ];
+    }
+
+    // ---------------------------------------------------------------------
+    // Two-factor authentication
+    // ---------------------------------------------------------------------
+
+    /**
+     * True when this user signs in with a code from an authenticator app
+     * (Google Authenticator, Authy, 1Password, ...).
+     *
+     * A user with 2FA on but NO secret keeps the emailed-code flow, which is
+     * what protects against anyone being locked out mid-setup.
+     */
+    public function usesAuthenticatorApp(): bool
+    {
+        return $this->two_factor_enabled
+            && $this->two_factor_secret !== null
+            && $this->two_factor_confirmed_at !== null;
     }
 
     // ---------------------------------------------------------------------

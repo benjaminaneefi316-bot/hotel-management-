@@ -4,10 +4,18 @@
 
 @section('content')
     <h1 class="h4 mb-1">Verify it's you</h1>
-    <p class="text-muted-soft small mb-4">
-        Enter the 6-digit code we emailed you. It expires in
-        {{ (int) config('security.otp.ttl_minutes', 5) }} minutes.
-    </p>
+
+    @if (($channel ?? 'email') === 'app')
+        <p class="text-muted-soft small mb-4">
+            Open your authenticator app (Google Authenticator, Authy, 1Password, ...)
+            and enter the 6-digit code it shows for this account. It refreshes every 30 seconds.
+        </p>
+    @else
+        <p class="text-muted-soft small mb-4">
+            Enter the 6-digit code we emailed you. It expires in
+            {{ (int) config('security.otp.ttl_minutes', 5) }} minutes.
+        </p>
+    @endif
 
     @if (! empty($devCode))
         <div class="alert alert-warning small">
@@ -33,15 +41,17 @@
         </button>
     </form>
 
-    <hr class="my-4">
+    @if (($canResend ?? true) && ($channel ?? 'email') !== 'app')
+        <hr class="my-4">
 
-    <form method="POST" action="{{ route('two-factor.resend') }}" class="text-center">
-        @csrf
-        <span class="text-muted-soft small">Didn't get the code?</span>
-        <button type="submit" class="btn btn-link btn-sm text-gold p-0 align-baseline">
-            Resend code
-        </button>
-    </form>
+        <form method="POST" action="{{ route('two-factor.resend') }}" class="text-center">
+            @csrf
+            <span class="text-muted-soft small">Didn't get the code?</span>
+            <button type="submit" class="btn btn-link btn-sm text-gold p-0 align-baseline">
+                Resend code
+            </button>
+        </form>
+    @endif
 
     <div class="text-center mt-2">
         <a href="{{ route('login') }}" class="btn btn-link btn-sm link-secondary p-0">

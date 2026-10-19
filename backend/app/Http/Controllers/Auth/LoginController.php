@@ -65,6 +65,10 @@ class LoginController extends Controller
 
         $redirect = redirect()->route('two-factor.challenge');
 
+        if ($challenge['channel'] === 'app') {
+            return $redirect->with('status', 'Open your authenticator app to get your verification code.');
+        }
+
         if ($challenge['ok']) {
             return $redirect->with('status', 'We emailed a verification code to '.$user->email.'.');
         }

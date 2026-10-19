@@ -99,6 +99,17 @@ return [
     */
     'two_factor' => [
         'expose_code' => (bool) env('TWO_FACTOR_EXPOSE_CODE', false),
+
+        /*
+        | Clock-drift tolerance for authenticator-app (TOTP) codes, measured in
+        | 30-second steps. 1 = accept the previous, current or next code, which
+        | is what mainstream apps need. Keep low: each step widens the window in
+        | which a stolen code stays usable.
+        */
+        'totp_window' => (int) env('TOTP_WINDOW', 1),
+
+        // Shown in the authenticator app as "Issuer: account".
+        'issuer' => env('TOTP_ISSUER', 'Azure Bay Hotel'),
     ],
 
     'password' => [

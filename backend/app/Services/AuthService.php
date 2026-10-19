@@ -34,6 +34,7 @@ final class AuthService
 {
     public function __construct(
         private readonly OtpService $otp,
+        private readonly TotpService $totp,
         private readonly AuditLogger $audit,
     ) {}
 
@@ -119,14 +120,24 @@ final class AuthService
     /**
      * Step 2a: issue the OTP challenge.
      *
-     * @return array{ok: bool, reason: string, retry_after: int|null, dev_code: string|null}
+     * The channel depends on how this user enrolled:
+     *   - authenticator app enrolled -> NO code is sent anywhere; the app
+     *     generates it locally, so we simply ask for it,
+     *   - otherwise                  -> the emailed-code flow, unchanged.
+     *
+     * @return array{ok: bool, reason: string, retry_after: int|null, dev_code: string|null, channel: string}
      */
     public function startChallenge(User $user, ?string $ip = null): array
     {
         // If the account does not have 2FA enabled it is signed straight in
         // (the assignment enables 2FA for every seeded account by default).
         if (! $user->two_factor_enabled) {
-            return ['ok' => true, 'reason' => '2fa_disabled', 'retry_after' => null, 'dev_code' => null];
+            return ['ok' => true, 'reason' => '2fa_disabled', 'retry_after' => null, 'dev_code' => null, 'channel' => 'none'];
+        }
+
+        // Authenticator app: the code lives on the phone, nothing is sent.
+        if ($user->usesAuthenticatorApp()) {
+            return ['ok' => true, 'reason' => 'app_challenge', 'retry_after' => null, 'dev_code' => null, 'channel' => 'app'];
         }
 
         $result = $this->otp->issue($user, $ip);
@@ -137,6 +148,7 @@ final class AuthService
                 'reason' => $result['reason'],
                 'retry_after' => $result['retry_after'],
                 'dev_code' => null,
+                'channel' => 'email',
             ];
         }
 
@@ -147,11 +159,12 @@ final class AuthService
             // Only ever populated when the dev exposure flag is on; the code is
             // never stored in plaintext and never logged.
             'dev_code' => $this->devCodeExposed() ? $result['code'] : null,
+            'channel' => 'email',
         ];
     }
 
     /**
-     * Step 2b: verify the OTP and, on success, complete the login.
+     * Step 2b: verify the submitted code and, on success, complete the login.
      *
      * @return array{ok: bool, user: User|null, reason: string}
      */
@@ -161,7 +174,12 @@ final class AuthService
             return ['ok' => true, 'user' => $user, 'reason' => '2fa_disabled'];
         }
 
-        $result = $this->otp->verify($user, $code);
+        // Authenticator app enrolled: check the code against the phone's secret.
+        if ($user->usesAuthenticatorApp()) {
+            $result = $this->totp->verify($user, $code);
+        } else {
+            $result = $this->otp->verify($user, $code);
+        }
 
         if (! $result['ok']) {
             $this->audit->failure(

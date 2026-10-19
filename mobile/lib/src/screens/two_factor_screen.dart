@@ -21,6 +21,10 @@ class _TwoFactorScreenState extends State<TwoFactorScreen> {
   String? _localError;
   String? _devCode;
 
+  /// True when the code must be read off Google Authenticator / Authy / etc.
+  /// rather than out of an email.
+  bool get _usesAuthenticatorApp => widget.challenge.usesAuthenticatorApp;
+
   @override
   void initState() {
     super.initState();
@@ -42,7 +46,9 @@ class _TwoFactorScreenState extends State<TwoFactorScreen> {
       return;
     }
     if (code.length < 4) {
-      setState(() => _localError = 'Enter the code from your email.');
+      setState(() => _localError = _usesAuthenticatorApp
+          ? 'Enter the 6-digit code shown in your authenticator app.'
+          : 'Enter the code from your email.');
       return;
     }
 
@@ -98,13 +104,20 @@ class _TwoFactorScreenState extends State<TwoFactorScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(Icons.mark_email_read_outlined,
-                      size: 44, color: AppTheme.gold),
+                  Icon(
+                    _usesAuthenticatorApp
+                        ? Icons.phone_iphone
+                        : Icons.mark_email_read_outlined,
+                    size: 44,
+                    color: AppTheme.gold,
+                  ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Check your inbox',
+                  Text(
+                    _usesAuthenticatorApp
+                        ? 'Open your authenticator app'
+                        : 'Check your inbox',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: AppTheme.navy,
@@ -112,7 +125,10 @@ class _TwoFactorScreenState extends State<TwoFactorScreen> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'We emailed a one-time code to $email.',
+                    _usesAuthenticatorApp
+                        ? 'Enter the 6-digit code it shows for Azure Bay Hotel. '
+                            'The code refreshes every 30 seconds.'
+                        : 'We emailed a one-time code to $email.',
                     textAlign: TextAlign.center,
                     style: const TextStyle(color: AppTheme.muted),
                   ),
@@ -169,11 +185,15 @@ class _TwoFactorScreenState extends State<TwoFactorScreen> {
                               : _verify,
                           child: const Text('Verify and continue'),
                         ),
-                        const SizedBox(height: 8),
-                        TextButton(
-                          onPressed: _resend,
-                          child: const Text('Resend code'),
-                        ),
+                        // Nothing is emailed for authenticator-app accounts,
+                        // so offering "Resend" there would be a lie.
+                        if (!_usesAuthenticatorApp) ...[
+                          const SizedBox(height: 8),
+                          TextButton(
+                            onPressed: _resend,
+                            child: const Text('Resend code'),
+                          ),
+                        ],
                       ],
                     ),
                   ),
