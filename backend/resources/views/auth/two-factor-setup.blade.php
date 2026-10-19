@@ -10,22 +10,11 @@
     @endif
 
     {{-- ---------------------------------------------------------------- --}}
-    {{-- Recovery codes: shown ONCE, right after a successful enrolment     --}}
+    {{-- Recovery codes are deliberately NOT displayed here. They are        --}}
+    {{-- generated but not stored or accepted anywhere yet (see             --}}
+    {{-- TotpService::generateRecoveryCodes), so showing them would send    --}}
+    {{-- someone to save codes that could never get them back in.           --}}
     {{-- ---------------------------------------------------------------- --}}
-    @if (session('recovery_codes'))
-        <div class="alert alert-warning small">
-            <strong>Save these recovery codes now.</strong>
-            <p class="mb-2 small">
-                Each one can be used once if you ever lose your phone. They are shown
-                only this once and cannot be retrieved later.
-            </p>
-            <div class="font-monospace fw-bold lh-lg">
-                @foreach (session('recovery_codes') as $code)
-                    {{ substr($code, 0, 5) }}-{{ substr($code, 5) }}<br>
-                @endforeach
-            </div>
-        </div>
-    @endif
 
     {{-- ---------------------------------------------------------------- --}}
     {{-- Already connected                                                 --}}

@@ -45,7 +45,6 @@ final class TwoFactorSetupController extends Controller
                 'user' => $user,
                 'qrSvg' => null,
                 'secret' => null,
-                'recoveryCodes' => [],
             ]);
         }
 
@@ -76,7 +75,6 @@ final class TwoFactorSetupController extends Controller
             'qrSvg' => $this->totp->qrSvg($uri),
             // Shown as text for anyone who cannot scan (or prefers to type it).
             'secret' => $secret,
-            'recoveryCodes' => [],
         ]);
     }
 
@@ -127,8 +125,8 @@ final class TwoFactorSetupController extends Controller
             return back()->withErrors(['code' => 'That code is not correct. Check your app and try again.']);
         }
 
-        $recoveryCodes = $this->totp->generateRecoveryCodes();
-
+        // Recovery codes are intentionally NOT minted here: they are not stored
+        // or accepted anywhere yet, so handing them out would be a false promise.
         $user->forceFill([
             'two_factor_secret' => $secret,
             'two_factor_confirmed_at' => now(),
@@ -147,8 +145,7 @@ final class TwoFactorSetupController extends Controller
 
         return redirect()
             ->route('two-factor.setup')
-            ->with('status', 'Authenticator app connected. Future sign-ins will ask for its code.')
-            ->with('recovery_codes', $recoveryCodes);
+            ->with('status', 'Authenticator app connected. Future sign-ins will ask for its code.');
     }
 
     /** Step 3: switch back to emailed codes and forget the secret. */

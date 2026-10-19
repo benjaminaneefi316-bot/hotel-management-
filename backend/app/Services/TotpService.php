@@ -25,8 +25,9 @@ use PragmaRX\Google2FA\Google2FA;
  *     (so an interrupted setup cannot lock anyone out)
  *   - verification accepts one step of clock drift either side (30s), which
  *     every mainstream authenticator app needs
- *   - a verified code is rejected if it was already used inside its window,
- *     which stops a code being replayed while it is still displayed on screen
+ *   - a code is rejected if the same one is verified twice inside a single
+ *     request; this is deliberately narrow, see the note in verify() - it is
+ *     NOT a cross-request replay defence
  *   - secrets are encrypted at rest by the User model's `encrypted` cast
  *   - secrets are never logged and never leave the server in an API response
  */
@@ -97,7 +98,16 @@ final class TotpService
             return ['ok' => false, 'reason' => 'invalid'];
         }
 
-        // Replay protection: reject a code already consumed inside its window.
+        // Duplicate check, scoped to THIS request only.
+        //
+        // Honest limitation: `usedCounters` lives in memory on this instance
+        // and Laravel builds a fresh container per HTTP request, so nothing
+        // survives the request. This stops the same code being consumed twice
+        // inside one request (double submit); it does NOT stop a code being
+        // replayed later while its ~60s window is still open. Closing that
+        // needs a persisted "last accepted counter" on users, which is not
+        // implemented - recorded as a known limitation in
+        // docs/TWO_FACTOR_AUTHENTICATION.md §8.
         $key = $user->getKey().':'.$counter;
 
         if (isset($this->usedCounters[$key])) {
@@ -110,10 +120,13 @@ final class TotpService
     }
 
     /**
-     * Generate the recovery codes offered once an app is enrolled.
+     * Generate the recovery codes displayed once when an app is enrolled.
      *
-     * These are the escape hatch for "I lost my phone": each may be used once
-     * in place of an app code and are stored hashed, never in plain text.
+     * NOTE (honest status): these codes are generated, shown once via a flash
+     * message, and then discarded. Nothing persists them and nothing accepts
+     * them as a second factor yet, so today they are UI only - a lost phone is
+     * still recovered with `two-factor:disable`. Do not promise them as a
+     * working fallback until storage + verification actually exist.
      *
      * @return string[] plain-text codes, shown to the user exactly once
      */

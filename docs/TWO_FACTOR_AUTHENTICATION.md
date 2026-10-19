@@ -1,19 +1,31 @@
-# Two-Factor Authentication (email OTP)
+# Two-Factor Authentication (authenticator app, with email fallback)
 
-The system uses an **emailed one-time code** as the second authentication factor, for
-both the web UI and the JSON API.
+The second factor comes from an **authenticator app (TOTP)** — Google Authenticator,
+Authy, 1Password, anything that speaks TOTP — as soon as an account has enrolled. Until
+an account enrolls, the code is **emailed** exactly as it always was, so nobody can be
+locked out halfway through setting up.
+
+Both channels are served by the same step-2 challenge; the login response says which one
+applies via a `channel` field (`app` or `email`). See
+[§9 Authenticator-app enrolment](#9-authenticator-app-enrolment-totp).
 
 Source files:
 
-- `app/Services/AuthService.php` — step 1 (password) and step 2 (code).
-- `app/Services/OtpService.php` — issue/verify/expire/rate-limit the code.
+- `app/Services/AuthService.php` — step 1 (password) and step 2 (code), and which
+  channel serves that code.
+- `app/Services/TotpService.php` — TOTP secret, QR payload, verification window,
+  recovery codes.
+- `app/Services/OtpService.php` — issue/verify/expire/rate-limit the emailed code.
+- `app/Http/Controllers/Auth/TwoFactorSetupController.php` — enrol / confirm / remove.
 - `app/Http/Controllers/Auth/LoginController.php` — web step 1.
 - `app/Http/Controllers/Auth/TwoFactorController.php` — web step 2 + resend.
 - `app/Http/Middleware/EnsurePendingTwoFactorChallenge.php` — guards the challenge pages.
 - `app/Http/Controllers/Api/ApiAuthController.php` — API step 1/step 2/resend.
 - `app/Providers/AppServiceProvider.php` — named rate limiters.
-- `config/security.php` — OTP + login tuning.
+- `config/security.php` — OTP + login tuning, plus `two_factor.totp_window` and
+  `two_factor.issuer`.
 - `app/Mail/TwoFactorOtpMail.php` + `resources/views/emails/two-factor-otp` — the email.
+- `resources/views/auth/two-factor-setup.blade.php` — QR, setup key and confirm screen.
 
 > **Core rule.** A correct password does **not** sign the user in. After step 1 the user
 > is still a guest; only a *pending 2FA* marker is set. `Auth::login()` is called **only**
@@ -280,6 +292,21 @@ Seeded accounts (`database/seeders/UserSeeder.php`):
 > Trade-off: disabling 2FA for an account reduces that account to single-factor
 > (password-only) sign-in. Keep it enabled for administrators.
 
+### Break-glass — lost phone or locked out
+
+If someone can no longer read their code, clear the enrolled key from the server. This
+is a console command, not an HTTP endpoint, so it needs shell access:
+
+```powershell
+# confirm first; add --force to skip the prompt
+php artisan two-factor:disable someone@example.com
+```
+
+It reports which account it touched and whether a key was removed. The account then
+falls back to the emailed code — so while `MAIL_MAILER=log` (no real mail) the very next
+step should be re-enrolling an authenticator app from the profile page, see
+[§9](#9-authenticator-app-enrolment-totp).
+
 ---
 
 ## 8. Things NOT verified / caveats
@@ -293,3 +320,86 @@ Seeded accounts (`database/seeders/UserSeeder.php`):
   authoritative and sets `two_factor` to `false` for that account.
 - The 2FA email is sent with `Mail::send()` (not queued) even though the Mailable uses the
   `Queueable` trait; delivery happens within the request.
+- **Cross-request replay is not prevented.** `TotpService::verify()` keeps accepted codes
+  in an in-memory array, which PHP discards at the end of the request, so a code shown on
+  screen could be submitted again later inside its ~60 s window. Fixing this properly
+  needs a persisted "last accepted counter" column on `users`. Repeats *within* a single
+  request are rejected.
+- **Recovery codes are not wired up** and are therefore no longer displayed anywhere.
+- **Authenticator enrolment is not covered by the committed phpunit suite** (50 tests);
+  it was exercised by an end-to-end script run against a live `php artisan serve`, which
+  was deleted afterwards. Re-verify manually after touching the flow.
+
+---
+
+## 9. Authenticator-app enrolment (TOTP)
+
+Libraries: `pragmarx/google2fa` (RFC 6238) and `bacon/bacon-qr-code`, which renders the
+QR as **inline SVG** — no `GD`/Imagick required, so the slim production image can still
+draw it. The secret never leaves the server except inside that SVG and the setup key.
+
+Columns, from `2026_10_19_000001_add_two_factor_authenticator_to_users_table.php`:
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `two_factor_secret` | `text`, nullable | cast `encrypted`, listed in `$hidden`, never serialised |
+| `two_factor_confirmed_at` | `timestamp`, nullable | set only after a correct code |
+
+An account uses the authenticator app only when **all three** hold:
+
+```php
+$user->usesAuthenticatorApp();
+// two_factor_enabled && secret !== null && confirmed_at !== null
+```
+
+Any other combination keeps the emailed-code path exactly as it was, so there is no
+state in which a half-finished setup blocks a sign-in.
+
+### Routes (authenticated web session; not API endpoints)
+
+| Method | URI | Name | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/profile/two-factor` | `two-factor.setup` | QR + setup key, or the "connected" screen |
+| `POST` | `/profile/two-factor` | `two-factor.confirm` | verify a live code, then enrol |
+| `DELETE` | `/profile/two-factor` | `two-factor.remove` | drop the key, back to emailed codes |
+
+### The three steps
+
+1. **Start** (`TwoFactorSetupController::create`) — generates a Base32 secret and holds
+   it in the *session* (`2fa.pending_secret`) for **15 minutes**. Nothing is written to
+   the user row, so closing the tab costs nothing. Re-opening within those 15 minutes
+   reuses the same secret, so the QR never silently changes under someone mid-setup.
+2. **Confirm** (`::confirm`) — requires exactly six digits, then *reads* (never pulls)
+   the pending secret, discards it if it is older than 15 minutes, and verifies against
+   a throwaway `User` probe so the real account stays untouched until the code checks
+   out. On success it writes `two_factor_secret`, `two_factor_confirmed_at` and
+   `two_factor_enabled`, clears the session copy and audits `auth.2fa.enrol.success`. A
+   wrong code only audits `auth.2fa.enrol.failed` and leaves the setup intact, so the
+   user simply types the next code.
+3. **Remove** (`::destroy`) — clears `two_factor_secret` and `two_factor_confirmed_at`
+   and audits `auth.2fa.enrol.removed`. `two_factor_enabled` is deliberately left as-is:
+   with no key the account falls back to emailed codes on its own.
+
+### Verification rules
+
+- `TOTP_WINDOW` (`two_factor.totp_window`, default `1`) accepts one 30-second step of
+  drift either side, i.e. roughly ±1 minute, which mainstream apps need.
+- The submitted value must match `^\d{6}$` before it reaches the library.
+- Rejects a duplicate code **within one request only** — see §8 for why that is not
+  cross-request replay protection.
+- The login response for an enrolled account carries `channel: app` and **never** a
+  `dev_code`, even when `TWO_FACTOR_EXPOSE_CODE=true`; that flag only opens the emailed
+  path.
+
+### Configuration
+
+| Env | Config key | Default | Meaning |
+| --- | --- | --- | --- |
+| `TOTP_WINDOW` | `two_factor.totp_window` | `1` | steps of clock drift accepted |
+| `TOTP_ISSUER` | `two_factor.issuer` | `Azure Bay Hotel` | label shown beside the account in the app |
+
+### Still to build
+
+- **Recovery codes** — see §8; not stored, not accepted, not shown.
+- **API enrolment** — the JSON API can *consume* a TOTP code but cannot start enrolment;
+  that is web-only at `/profile/two-factor`.

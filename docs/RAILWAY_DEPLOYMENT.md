@@ -266,6 +266,45 @@ cd "C:\Users\CHARMIES\Desktop\project\hotel-management\mobile"
 
 See `docs/API.md` for the endpoint contract.
 
+### The hosted web app — `/app/` (iPhone, iPad, any browser)
+
+The same deploy also serves the Flutter client from `backend/public/app`, at the
+sub-path **`/app/`** on the API's own domain:
+
+```
+https://hotel-api-production-9f58.up.railway.app/app/
+```
+
+Because it is served from the *same* origin it calls, the browser never sends a
+cross-origin request — **no CORS configuration is needed at all**, and there is only
+one public URL to remember.
+
+Rebuild it whenever Flutter code changes (run from the `mobile` folder):
+
+```powershell
+& "C:\Users\CHARMIES\tools\flutter\bin\flutter.bat" build web --release `
+  --base-href "/app/" --no-web-resources-cdn --no-wasm-dry-run `
+  --dart-define=API_BASE_URL=https://<your-domain>/api
+
+Remove-Item "..\backend\public\app" -Recurse -Force
+Copy-Item "build\web" "..\backend\public\app" -Recurse
+```
+
+| Flag | Why it matters |
+| --- | --- |
+| `--base-href "/app/"` | Without it every asset 404s, because the app lives in a sub-folder, not the root. |
+| `--no-web-resources-cdn` | Loads the ~36 MB graphics engine from the server itself instead of `gstatic.com`, so the app still starts on a weak phone connection. |
+| `--dart-define=API_BASE_URL=…/api` | Compiled into the bundle at build time; change it only when the API domain changes. |
+
+The build output is committed on purpose: the `Dockerfile` does `COPY . .`, so the
+deploy ships exactly the bundle that was tested. Git stores identical files only once,
+so a rebuild adds roughly the size of `main.dart.js` (~3 MB), not the whole 40 MB.
+
+**On the phone:** open `/app/` once in Safari, then Share → **Add to Home Screen**. It
+gets its own icon and opens full-screen, without the browser chrome. A *native* iOS app
+cannot be built from Windows at all (Apple requires a Mac with Xcode and a paid Apple
+Developer account), which is why this web client is the supported route.
+
 ---
 
 ## 8. Scheduler and backups on Railway
