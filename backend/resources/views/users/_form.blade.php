@@ -42,12 +42,28 @@
     </div>
 
     <div class="col-12">
-        <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="two_factor_enabled"
-                   name="two_factor_enabled" value="1"
-                   @checked((bool) old('two_factor_enabled', $user?->two_factor_enabled ?? true))>
-            <label class="form-check-label" for="two_factor_enabled">Require two-factor authentication</label>
-        </div>
+        @if ($isCreate)
+            <div class="alert alert-info mb-0">
+                <i class="bi bi-shield-lock me-2"></i>
+                Two-factor switches on later, from the user's own profile, once they enrol an
+                authenticator app. A brand-new account cannot receive a sign-in code yet, so
+                enabling it here would lock them out.
+            </div>
+        @else
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="two_factor_enabled"
+                       name="two_factor_enabled" value="1"
+                       @checked((bool) old('two_factor_enabled', $user?->two_factor_enabled ?? false))>
+                <label class="form-check-label" for="two_factor_enabled">Require two-factor authentication</label>
+            </div>
+            @error('two_factor_enabled')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+            @unless ($user?->two_factor_secret && $user?->two_factor_confirmed_at)
+                <div class="form-text">
+                    This user has not enrolled an authenticator app yet, so two-factor cannot be
+                    switched on here. It turns on automatically when they enrol from their profile.
+                </div>
+            @endunless
+        @endif
     </div>
 </div>
 

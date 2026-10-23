@@ -80,12 +80,22 @@ final class UserController extends Controller
             'roles.*' => ['string', Rule::in(RoleName::names())],
         ]);
 
+        // A brand-new account has no authenticator app yet, so enabling 2FA
+        // here would demand a code the person cannot produce (the fallback is
+        // an emailed code, and this deployment has no working mail transport).
+        // Two-factor switches itself on when they enrol from their profile.
+        if ($request->boolean('two_factor_enabled')) {
+            return back()->withInput()->withErrors([
+                'two_factor_enabled' => 'New accounts start without two-factor. Create the user first; it switches on automatically once they enrol an authenticator app from Profile → Two-factor.',
+            ]);
+        }
+
         $user = new User([
             'name' => $data['name'],
             'username' => $data['username'],
             'email' => $data['email'],
             'status' => $data['status'],
-            'two_factor_enabled' => $request->boolean('two_factor_enabled'),
+            'two_factor_enabled' => false,
         ]);
 
         $user->setPassword($data['password']);
@@ -149,6 +159,17 @@ final class UserController extends Controller
             } catch (BusinessRuleException $e) {
                 return back()->withInput()->withErrors(['business_rule' => $e->getMessage()]);
             }
+        }
+
+        // Two-factor can only be switched on for someone who has already
+        // enrolled an authenticator app; otherwise they would be locked out.
+        $hasEnrolledAuthenticator = $user->two_factor_secret !== null
+            && $user->two_factor_confirmed_at !== null;
+
+        if ($request->boolean('two_factor_enabled') && ! $hasEnrolledAuthenticator) {
+            return back()->withInput()->withErrors([
+                'two_factor_enabled' => 'This user has not enrolled an authenticator app yet. Ask them to sign in and enrol from Profile → Two-factor; it switches on automatically.',
+            ]);
         }
 
         $before = [
