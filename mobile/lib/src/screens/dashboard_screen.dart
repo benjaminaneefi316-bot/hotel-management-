@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../api/hotel_repository.dart';
@@ -69,11 +69,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               children: [
                 Text(
                   'Welcome back, ${user?.name ?? 'there'}',
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.navy,
-                  ),
+                  style: AppTheme.display(22),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -128,7 +124,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
-                      color: AppTheme.navy,
+                      color: AppTheme.charcoal,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -149,7 +145,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     '${row.count}',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w700,
-                                      color: AppTheme.navy,
+                                      color: AppTheme.charcoal,
                                     ),
                                   ),
                                 ],

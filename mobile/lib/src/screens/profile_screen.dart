@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../state/session_controller.dart';
@@ -23,7 +23,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 8),
             CircleAvatar(
               radius: 40,
-              backgroundColor: AppTheme.navy,
+              backgroundColor: AppTheme.charcoal,
               child: Text(
                 user?.initials ?? '?',
                 style: const TextStyle(
@@ -36,11 +36,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               user?.name ?? 'Guest',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: AppTheme.navy,
-              ),
+              style: AppTheme.display(20),
             ),
             const SizedBox(height: 4),
             Text(
@@ -61,8 +57,8 @@ class ProfileScreen extends StatelessWidget {
                   .map(
                     (role) => Chip(
                       label: Text(role),
-                      backgroundColor: AppTheme.navy.withAlpha(12),
-                      side: const BorderSide(color: AppTheme.line),
+                      backgroundColor: AppTheme.charcoal.withAlpha(12),
+                      side: const BorderSide(color: AppTheme.border),
                     ),
                   )
                   .toList(growable: false),
@@ -80,7 +76,7 @@ class ProfileScreen extends StatelessWidget {
                   _Row(
                     icon: Icons.alternate_email,
                     label: 'Email',
-                    value: user?.email ?? '—',
+                    value: user?.email ?? 'â€”',
                   ),
                   if (user?.guestProfileId != null) ...[
                     const Divider(height: 20),

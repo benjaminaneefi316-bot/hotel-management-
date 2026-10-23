@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../api/api_exception.dart';
@@ -133,7 +133,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
-                color: AppTheme.navy,
+                color: AppTheme.charcoal,
               ),
             ),
             const SizedBox(height: 12),
@@ -175,7 +175,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: AppTheme.navy,
+                          color: AppTheme.charcoal,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -279,13 +279,13 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFB23A48).withAlpha(20),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFB23A48).withAlpha(80)),
+                color: AppTheme.danger.withAlpha(20),
+                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                border: Border.all(color: AppTheme.danger.withAlpha(80)),
               ),
               child: Text(
                 _error!,
-                style: const TextStyle(color: Color(0xFF8E2B36)),
+                style: const TextStyle(color: AppTheme.danger),
               ),
             ),
           ],
@@ -385,7 +385,7 @@ class _Counter extends StatelessWidget {
           IconButton(
             onPressed: value < max ? () => onChanged(value + 1) : null,
             icon: const Icon(Icons.add_circle_outline),
-            color: AppTheme.navy,
+            color: AppTheme.charcoal,
           ),
         ],
       ),

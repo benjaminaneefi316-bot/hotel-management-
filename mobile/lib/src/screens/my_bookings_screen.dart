@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../api/hotel_repository.dart';
@@ -172,7 +172,7 @@ class _BookingTile extends StatelessWidget {
                       booking.reference,
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
-                        color: AppTheme.navy,
+                        color: AppTheme.charcoal,
                       ),
                     ),
                   ),
@@ -189,7 +189,7 @@ class _BookingTile extends StatelessWidget {
                     Text(
                       booking.guest!.fullName,
                       style: const TextStyle(
-                        color: AppTheme.ink,
+                        color: AppTheme.text,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -204,7 +204,7 @@ class _BookingTile extends StatelessWidget {
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
-                      '${Fmt.prettyDate(booking.checkInDate)} → '
+                      '${Fmt.prettyDate(booking.checkInDate)} â†’ '
                       '${Fmt.prettyDate(booking.checkOutDate)}',
                       style: const TextStyle(color: AppTheme.muted, fontSize: 13),
                     ),
@@ -230,7 +230,7 @@ class _BookingTile extends StatelessWidget {
                     Fmt.money(booking.totalAmount),
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
-                      color: AppTheme.navy,
+                      color: AppTheme.charcoal,
                     ),
                   ),
                 ],

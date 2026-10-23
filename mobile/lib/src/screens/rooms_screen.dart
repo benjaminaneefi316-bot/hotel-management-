@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../api/hotel_repository.dart';
@@ -152,7 +152,7 @@ class _RoomTile extends StatelessWidget {
                   'Room ${room.roomNumber}',
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.navy,
+                    color: AppTheme.charcoal,
                   ),
                 ),
                 const SizedBox(height: 2),

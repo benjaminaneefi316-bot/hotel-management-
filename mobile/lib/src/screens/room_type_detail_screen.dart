@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../models/room_type.dart';
 import '../theme/app_theme.dart';
@@ -31,11 +31,7 @@ class RoomTypeDetailScreen extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             type.name,
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              color: AppTheme.navy,
-            ),
+            style: AppTheme.display(22),
           ),
           const SizedBox(height: 6),
           Text(
@@ -43,7 +39,7 @@ class RoomTypeDetailScreen extends StatelessWidget {
             style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: AppTheme.navySoft,
+              color: AppTheme.slate,
             ),
           ),
           const SizedBox(height: 16),
@@ -66,7 +62,7 @@ class RoomTypeDetailScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               type.description!,
-              style: const TextStyle(color: AppTheme.ink, height: 1.5),
+              style: const TextStyle(color: AppTheme.text, height: 1.5),
             ),
           ],
           if (type.amenities.isNotEmpty) ...[
@@ -81,7 +77,7 @@ class RoomTypeDetailScreen extends StatelessWidget {
                     (a) => Chip(
                       label: Text(a),
                       backgroundColor: Colors.white,
-                      side: const BorderSide(color: AppTheme.line),
+                      side: const BorderSide(color: AppTheme.border),
                     ),
                   )
                   .toList(growable: false),
@@ -115,7 +111,7 @@ class _SectionTitle extends StatelessWidget {
       style: const TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w700,
-        color: AppTheme.navy,
+        color: AppTheme.charcoal,
       ),
     );
   }
@@ -134,7 +130,7 @@ class _FactChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.line),
+        border: Border.all(color: AppTheme.border),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

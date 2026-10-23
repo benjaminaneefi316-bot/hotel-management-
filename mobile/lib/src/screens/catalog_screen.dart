@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../api/hotel_repository.dart';
@@ -99,9 +99,10 @@ class _Intro extends StatelessWidget {
         Text(
           'Find your room',
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: AppTheme.navy,
+            fontFamily: AppTheme.displayFont,
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.charcoal,
           ),
         ),
         SizedBox(height: 4),
@@ -156,7 +157,7 @@ class _RoomTypeCard extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.w700,
-                              color: AppTheme.navy,
+                              color: AppTheme.charcoal,
                             ),
                           ),
                         ),
@@ -165,7 +166,7 @@ class _RoomTypeCard extends StatelessWidget {
                           '${type.basePrice.toStringAsFixed(0)}/night',
                           style: const TextStyle(
                             fontWeight: FontWeight.w700,
-                            color: AppTheme.navySoft,
+                            color: AppTheme.slate,
                           ),
                         ),
                       ],
@@ -233,9 +234,9 @@ class _AmenityChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: AppTheme.cream,
+        color: AppTheme.sand,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.line),
+        border: Border.all(color: AppTheme.border),
       ),
       child: Text(label, style: const TextStyle(fontSize: 12)),
     );

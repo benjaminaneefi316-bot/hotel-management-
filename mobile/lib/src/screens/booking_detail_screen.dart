@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../api/api_exception.dart';
@@ -118,7 +118,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
-                              color: AppTheme.navy,
+                              color: AppTheme.charcoal,
                             ),
                           ),
                         ),
@@ -202,7 +202,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                       ...booking.payments.map(
                         (p) => _KV(
                           '${p.statusLabel}'
-                          '${p.methodLabel != null ? ' · ${p.methodLabel}' : ''}',
+                          '${p.methodLabel != null ? ' Â· ${p.methodLabel}' : ''}',
                           Fmt.money(p.amount, currency: p.currency),
                         ),
                       ),
@@ -235,12 +235,12 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFB23A48).withAlpha(20),
-                    borderRadius: BorderRadius.circular(12),
+                    color: AppTheme.danger.withAlpha(20),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                   ),
                   child: Text(
                     _error!,
-                    style: const TextStyle(color: Color(0xFF8E2B36)),
+                    style: const TextStyle(color: AppTheme.danger),
                   ),
                 ),
               ],
@@ -249,7 +249,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 OutlinedButton.icon(
                   onPressed: _working ? null : () => _cancel(booking),
                   icon: const Icon(Icons.cancel_outlined, size: 18),
-                  label: Text(_working ? 'Cancelling…' : 'Cancel booking'),
+                  label: Text(_working ? 'Cancellingâ€¦' : 'Cancel booking'),
                 ),
               ],
             ],

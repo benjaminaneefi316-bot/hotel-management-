@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 
@@ -31,11 +31,6 @@ class AppTextField extends StatelessWidget {
   final int maxLines;
   final bool enabled;
 
-  OutlineInputBorder _border(Color color) => OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: color),
-      );
-
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -50,16 +45,7 @@ class AppTextField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        filled: true,
-        fillColor: Colors.white,
         prefixIcon: prefixIcon == null ? null : Icon(prefixIcon, size: 20),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        border: _border(AppTheme.line),
-        enabledBorder: _border(AppTheme.line),
-        focusedBorder: _border(AppTheme.navy),
-        errorBorder: _border(Colors.red.shade400),
-        focusedErrorBorder: _border(Colors.red.shade400),
       ),
     );
   }
@@ -140,7 +126,7 @@ class RemoteImage extends StatelessWidget {
     return Container(
       height: height,
       width: width,
-      color: AppTheme.navySoft,
+      color: AppTheme.slate,
       alignment: Alignment.center,
       child: const Icon(Icons.hotel_outlined, color: Colors.white54, size: 34),
     );
@@ -158,19 +144,19 @@ class StatusPill extends StatelessWidget {
     switch (status) {
       case 'confirmed':
       case 'available':
-        return const Color(0xFF1E8E5A);
+        return AppTheme.success;
       case 'pending':
       case 'cleaning':
-        return const Color(0xFFB7791F);
+        return AppTheme.warning;
       case 'checked_in':
       case 'occupied':
-        return AppTheme.navy;
+        return AppTheme.charcoal;
       case 'checked_out':
         return AppTheme.muted;
       case 'cancelled':
       case 'out_of_service':
       case 'maintenance':
-        return const Color(0xFFB23A48);
+        return AppTheme.danger;
       default:
         return AppTheme.muted;
     }
@@ -212,25 +198,33 @@ class KpiTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Panel(
+    // `.kpi-card` on the website: a gold rule down the left edge and a serif
+    // figure.
+    return Container(
       padding: const EdgeInsets.all(14),
+      decoration: AppTheme.panel().copyWith(
+        border: const Border(
+          left: BorderSide(color: AppTheme.gold, width: 4),
+          top: BorderSide(color: AppTheme.border),
+          right: BorderSide(color: AppTheme.border),
+          bottom: BorderSide(color: AppTheme.border),
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, color: AppTheme.gold, size: 22),
           const SizedBox(height: 10),
+          Text(value, style: AppTheme.display(24, weight: FontWeight.w700)),
+          const SizedBox(height: 4),
           Text(
-            value,
+            label.toUpperCase(),
             style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              color: AppTheme.navy,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.2,
+              color: AppTheme.muted,
             ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 12, color: AppTheme.muted),
           ),
         ],
       ),
@@ -271,7 +265,7 @@ class EmptyState extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.navy,
+                color: AppTheme.charcoal,
               ),
             ),
             if (message != null) ...[

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../auth/auth_repository.dart';
@@ -117,11 +117,7 @@ class _TwoFactorScreenState extends State<TwoFactorScreen> {
                         ? 'Open your authenticator app'
                         : 'Check your inbox',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: AppTheme.navy,
-                    ),
+                    style: AppTheme.display(21),
                   ),
                   const SizedBox(height: 6),
                   Text(
@@ -158,7 +154,7 @@ class _TwoFactorScreenState extends State<TwoFactorScreen> {
                             child: Row(
                               children: [
                                 const Icon(Icons.science_outlined,
-                                    size: 16, color: AppTheme.navy),
+                                    size: 16, color: AppTheme.charcoal),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
@@ -175,7 +171,7 @@ class _TwoFactorScreenState extends State<TwoFactorScreen> {
                           Text(
                             error,
                             style: const TextStyle(
-                                color: Color(0xFFB23A48), fontSize: 13),
+                                color: AppTheme.danger, fontSize: 13),
                           ),
                         ],
                         const SizedBox(height: 20),

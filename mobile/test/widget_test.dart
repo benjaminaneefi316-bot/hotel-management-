@@ -31,8 +31,9 @@ void main() {
     testWidgets('renders the brand and the sign-in form', (tester) async {
       await tester.pumpWidget(_host(const LoginScreen()));
 
-      expect(find.text('Azure Bay Hotel'), findsOneWidget);
-      expect(find.text('Sign in'), findsOneWidget);
+      expect(find.text('Azure Bay'), findsOneWidget);
+      expect(find.text('HOTEL & RESORT'), findsOneWidget);
+      expect(find.text('Welcome back'), findsOneWidget);
       expect(find.text('Continue'), findsOneWidget);
       expect(find.text('Email address'), findsOneWidget);
       expect(find.text('Password'), findsOneWidget);
