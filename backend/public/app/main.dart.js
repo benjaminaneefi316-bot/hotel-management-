@@ -49123,7 +49123,7 @@ break
 case 7:case 1:return A.B(q,r)
 case 2:return A.A(o.at(-1),r)}})
 return A.C($async$v1,r)},
-E(a){var s=null,r=A.fG(s,B.a1I),q=this.d
+E(a){var s=null,r=A.fG(s,B.a1J),q=this.d
 q===$&&A.a()
 return A.eX(r,s,A.j9(new A.atg(this),q,t.Wf),s,s)}}
 A.atb.prototype={
@@ -49185,7 +49185,7 @@ if(n.length===0)o.push(B.a2f)
 else B.b.M(o,new A.a_(n,new A.atc(),A.a2(n).i("a_<1,e>")))
 m.push(new A.e_(A.bj(o,B.G,B.k,B.m),k,k))
 m.push(B.aq)
-o=A.b([B.a2b,B.bi],p)
+o=A.b([B.a2c,B.bi],p)
 n=r.ax
 if(n.length===0)o.push(B.a2k)
 else B.b.M(o,new A.a_(n,new A.atd(),A.a2(n).i("a_<1,e>")))
@@ -49325,7 +49325,7 @@ p=p.cJ(m)
 n=n.cJ(m)
 m=k.e
 l=k.d
-h=A.b([new A.e_(h,j,j),B.aq,new A.e_(A.bj(A.b([B.a2_,B.bi,new A.I6("Check-in",o+"  ("+q+")",new A.atp(k),j),B.lt,new A.I6("Check-out",p+"  ("+n+")",new A.atq(k),j),B.lt,new A.aA(B.ly,A.bF(A.b([B.a2e,B.di,A.Y(""+(B.e.dQ(m.fw(l).a,i)>=1?B.e.dQ(m.fw(l).a,i):1),j,j,j,B.c2,j,j,j)],r),B.p,B.k,B.m,0),j)],r),B.G,B.k,B.m),j,j),B.aq,new A.e_(A.bj(A.b([B.a27,B.bi,new A.HR("Adults",k.f,1,g,new A.atr(k),j),B.lt,new A.HR("Children",k.r,0,6,new A.ats(k),j)],r),B.G,B.k,B.m),j,j),B.aq,new A.e_(A.bj(A.b([B.a1R,B.V,A.dM(k.w,j,j,"Anything we should prepare?",3,!1,j,j,j,j)],r),B.G,B.k,B.m),j,j)],r)
+h=A.b([new A.e_(h,j,j),B.aq,new A.e_(A.bj(A.b([B.a20,B.bi,new A.I6("Check-in",o+"  ("+q+")",new A.atp(k),j),B.lt,new A.I6("Check-out",p+"  ("+n+")",new A.atq(k),j),B.lt,new A.aA(B.ly,A.bF(A.b([B.a2e,B.di,A.Y(""+(B.e.dQ(m.fw(l).a,i)>=1?B.e.dQ(m.fw(l).a,i):1),j,j,j,B.c2,j,j,j)],r),B.p,B.k,B.m,0),j)],r),B.G,B.k,B.m),j,j),B.aq,new A.e_(A.bj(A.b([B.a28,B.bi,new A.HR("Adults",k.f,1,g,new A.atr(k),j),B.lt,new A.HR("Children",k.r,0,6,new A.ats(k),j)],r),B.G,B.k,B.m),j,j),B.aq,new A.e_(A.bj(A.b([B.a1S,B.V,A.dM(k.w,j,j,"Anything we should prepare?",3,!1,j,j,j,j)],r),B.G,B.k,B.m),j,j)],r)
 if(k.y!=null){q=A.aj(20,B.ad.t()>>>16&255,B.ad.t()>>>8&255,B.ad.t()&255)
 p=A.c6(10)
 o=A.i9(A.aj(80,B.ad.t()>>>16&255,B.ad.t()>>>8&255,B.ad.t()&255))
@@ -49334,7 +49334,7 @@ n.toString
 B.b.M(h,A.b([B.aq,A.cj(j,A.Y(n,j,j,j,B.d_,j,j,j),B.o,j,j,new A.cs(q,j,o,p,j,j,B.ai),j,j,j,B.cM,j,j,j)],r))}h.push(B.ci)
 r=k.x
 q=r?j:k.gabI()
-h.push(A.ma(r?B.Cx:B.a1Z,q))
+h.push(A.ma(r?B.Cx:B.a2_,q))
 return A.eX(s,j,A.ir(h,B.bF,j,B.S,!1),j,j)}}
 A.ath.prototype={
 $0(){var s,r,q=this,p=864e8,o=q.a
@@ -49485,7 +49485,7 @@ return A.y(A.c8(p,!1).eS(A.k8(new A.avA(b),null,t.H)),$async$ij)
 case 2:if(q.c!=null)q.Hm()
 return A.B(null,r)}})
 return A.C($async$ij,r)},
-E(a){var s=A.cb(a,!0,t.az).b,r=A.fG(A.b([A.aLK(B.qV,B.D8,this.gSB()),B.aV],t.p),B.a2a),q=this.d
+E(a){var s=A.cb(a,!0,t.az).b,r=A.fG(A.b([A.aLK(B.qV,B.D8,this.gSB()),B.aV],t.p),B.a2b),q=this.d
 q===$&&A.a()
 return A.eX(r,null,A.j9(new A.avP(this,s),q,t.aD),null,null)}}
 A.avB.prototype={
@@ -49513,7 +49513,7 @@ n=s.a
 m=""+s.b
 l=""+s.c
 k=t.p
-n=A.b([o,B.dh,A.Y(n.length===0?"Today":n,j,j,j,B.bk,j,j,j),B.aq,new A.e_(A.bj(A.b([B.a2u,B.ab,A.bF(A.b([A.c7(new A.HQ(m,"Arriving",B.fZ,j),1),A.cj(j,j,B.o,B.bu,j,j,j,42,j,j,j,j,1),A.c7(new A.HQ(l,"Leaving",B.eI,j),1)],k),B.p,B.k,B.m,0),B.bN,A.bU(A.r2(B.Lp,B.a1N,new A.avC(r),j),52,1/0)],k),B.G,B.k,B.m),B.bF,j),B.ci,B.a2q,B.V,new A.i5(B.mn,"All bookings","Search, open and cancel reservations",new A.avD(r),j),B.V,new A.i5(B.mr,"Rooms","See every room and its housekeeping status",new A.avE(r),j),B.V,new A.i5(B.h0,"Payments","Taken today, pending balance and refunds",new A.avH(r),j)],k)
+n=A.b([o,B.dh,A.Y(n.length===0?"Today":n,j,j,j,B.bk,j,j,j),B.aq,new A.e_(A.bj(A.b([B.a2u,B.ab,A.bF(A.b([A.c7(new A.HQ(m,"Arriving",B.fZ,j),1),A.cj(j,j,B.o,B.bu,j,j,j,42,j,j,j,j,1),A.c7(new A.HQ(l,"Leaving",B.eI,j),1)],k),B.p,B.k,B.m,0),B.bN,A.bU(A.r2(B.Lp,B.a1O,new A.avC(r),j),52,1/0)],k),B.G,B.k,B.m),B.bF,j),B.ci,B.a2q,B.V,new A.i5(B.mn,"All bookings","Search, open and cancel reservations",new A.avD(r),j),B.V,new A.i5(B.mr,"Rooms","See every room and its housekeeping status",new A.avE(r),j),B.V,new A.i5(B.h0,"Payments","Taken today, pending balance and refunds",new A.avH(r),j)],k)
 q=p?j:B.b.n(q.e,"admin")
 if(q===!0)B.b.M(n,A.b([B.V,new A.i5(B.qQ,"Users","Add staff, reset passwords, switch accounts off",new A.avI(r),j)],k))
 n.push(B.V)
@@ -49674,7 +49674,7 @@ break}s=4
 return A.y(p.r8(a,"Checked out",new A.axF(p,n)),$async$v5)
 case 4:case 1:return A.B(q,r)}})
 return A.C($async$v5,r)},
-E(a){var s=A.fG(A.b([A.aLK(B.qV,B.D8,this.gTx()),B.aV],t.p),B.a21),r=this.d
+E(a){var s=A.fG(A.b([A.aLK(B.qV,B.D8,this.gTx()),B.aV],t.p),B.a22),r=this.d
 r===$&&A.a()
 return A.eX(s,null,A.j9(new A.axT(this),r,t.jf),null,null)}}
 A.axK.prototype={
@@ -49884,7 +49884,7 @@ if(p.length!==0){n=A.a2(p).i("a_<1,qE>")
 p=A.Z(new A.a_(p,new A.ayF(),n),n.i("ak.E"))
 p.$flags=1
 q.push(new A.pN("Gallery","A look around",A.aQ_(1,p,2,8,8,B.xH,!0),m))}p=A.i6(B.A,!0)
-q.push(new A.aA(B.Jq,A.cj(m,A.bj(A.b([B.a1M,B.bi,B.a2c,B.bN,A.bU(A.r2(B.Lg,B.a2s,new A.ayG(a,r),A.aPK(B.ae,m,m,B.A,m,m,m,m)),52,1/0),B.V,A.bU(A.wL(B.KR,B.D9,s.gamK(),A.aR7(m,m,m,m,m,m,m,m,m,B.i,m,m,m,m,m,B.Eh,m,m,m,m)),52,1/0)],o),B.p,B.k,B.m),B.o,m,m,p,m,m,m,B.q6,m,m,m),m))
+q.push(new A.aA(B.Jq,A.cj(m,A.bj(A.b([B.a1N,B.bi,B.a1E,B.bN,A.bU(A.r2(B.Lg,B.a2s,new A.ayG(a,r),A.aPK(B.ae,m,m,B.A,m,m,m,m)),52,1/0),B.V,A.bU(A.wL(B.KR,B.D9,s.gamK(),A.aR7(m,m,m,m,m,m,m,m,m,B.i,m,m,m,m,m,B.Eh,m,m,m,m)),52,1/0)],o),B.p,B.k,B.m),B.o,m,m,p,m,m,m,B.q6,m,m,m),m))
 return A.th(A.ir(q,B.J5,m,B.S,!1),new A.ayH(s))},
 $S:655}
 A.ayH.prototype={
@@ -49931,7 +49931,7 @@ A.yo.prototype={
 E(a){return B.p9}}
 A.Z4.prototype={
 E(a){var s=null,r=this.c,q=t.p
-return A.bU(A.hR(B.bS,A.b([A.xc(r.y),B.Ig,new A.aA(B.lz,A.bj(A.b([A.Y("AZURE BAY \xb7 EST. "+r.Q,s,s,s,B.bR.bs(B.le),s,s,s),B.bi,A.Y(r.b,s,s,s,A.cG(s,s,B.i,s,s,s,s,s,"PlayfairDisplay",s,s,30,s,s,B.an,s,1.15,!0,s,0.2,s,s,s,s,s,s),s,s,s),B.bi,A.Y(r.d,3,B.au,s,B.D6,s,s,s),B.ab,A.bF(A.b([B.KM,B.hE,A.Y(A.k(r.z)+" / 5 guest rating",s,s,s,B.a_O,s,s,s),B.di,A.kn(B.a23,this.d,A.Gq(s,s,s,s,s,s,s,s,s,B.le,s,s,s,s,s,s,s,s,s,s))],q),B.p,B.k,B.m,0)],q),B.G,B.hj,B.m),s)],q),B.F,B.CB,s),300,s)}}
+return A.bU(A.hR(B.bS,A.b([A.xc(r.y),B.Ig,new A.aA(B.lz,A.bj(A.b([A.Y("AZURE BAY \xb7 EST. "+r.Q,s,s,s,B.bR.bs(B.le),s,s,s),B.bi,A.Y(r.b,s,s,s,A.cG(s,s,B.i,s,s,s,s,s,"PlayfairDisplay",s,s,30,s,s,B.an,s,1.15,!0,s,0.2,s,s,s,s,s,s),s,s,s),B.bi,A.Y(r.d,3,B.au,s,B.D6,s,s,s),B.ab,A.bF(A.b([B.KM,B.hE,A.Y(A.k(r.z)+" / 5 guest rating",s,s,s,B.a_O,s,s,s),B.di,A.kn(B.a24,this.d,A.Gq(s,s,s,s,s,s,s,s,s,B.le,s,s,s,s,s,s,s,s,s,s))],q),B.p,B.k,B.m,0)],q),B.G,B.hj,B.m),s)],q),B.F,B.CB,s),300,s)}}
 A.pN.prototype={
 E(a){var s=null
 return new A.aA(B.Jn,A.bj(A.b([A.Y(this.c.toUpperCase(),s,s,s,B.bR,s,s,s),B.bO,A.Y(this.d,s,s,s,A.cG(s,s,B.A,s,s,s,s,s,"PlayfairDisplay",s,s,22,s,s,B.a8,s,1.15,!0,s,0.2,s,s,s,s,s,s),s,s,s),B.ab,this.e],t.p),B.G,B.k,B.m),s)}}
@@ -50001,7 +50001,7 @@ break
 case 6:case 1:return A.B(q,r)
 case 2:return A.A(o.at(-1),r)}})
 return A.C($async$Ah,r)},
-E(a){var s,r,q,p,o=this,n=null,m=A.fG(n,B.a20),l=o.a.c,k=t.p
+E(a){var s,r,q,p,o=this,n=null,m=A.fG(n,B.a21),l=o.a.c,k=t.p
 l=A.b([new A.e_(A.bj(A.b([new A.jy(B.qP,l.e,n),B.V,new A.jy(B.j_,l.f,n),B.V,new A.jy(B.h_,l.r,n),B.Ix,B.a4i],k),B.p,B.k,B.m),n,n),B.k_],k)
 if(o.Q!=null){s=A.aj(18,B.bD.t()>>>16&255,B.bD.t()>>>8&255,B.bD.t()&255)
 r=A.c6(10)
@@ -50024,7 +50024,7 @@ k=o.y
 s=k?n:o.gako()
 l.push(A.bU(A.r2(B.Lw,A.Y(k?"Sending\u2026":"Send enquiry",n,n,n,n,n,n,n),s,n),52,n))
 l.push(B.V)
-l.push(B.a1E)
+l.push(B.a1F)
 return A.eX(m,n,A.PQ(n,A.ir(l,B.bF,n,B.S,!1),o.d),n,n)}}
 A.auQ.prototype={
 $0(){var s=this.a
@@ -50090,7 +50090,7 @@ s=l?q:r.gaqp()
 m.push(A.ma(l?B.Cx:B.a1u,s))
 m.push(B.bN)
 m.push(B.a1D)
-return A.eX(q,B.A,A.vB(A.tq(!0,A.eP(A.xv(new A.dF(B.oM,A.bj(A.b([B.a49,B.Wv,A.cj(q,A.PQ(q,A.bj(m,B.bW,B.k,B.m),r.d),B.o,q,q,new A.cs(B.i,q,q,o,B.P8,q,B.ai),q,q,q,B.Jt,q,q,q),B.ci,B.a22],n),B.bW,B.k,B.aD),q),B.q9,B.S),q,q),!1,B.at,!0),B.EB,B.db),q,q)}}
+return A.eX(q,B.A,A.vB(A.tq(!0,A.eP(A.xv(new A.dF(B.oM,A.bj(A.b([B.a49,B.Wv,A.cj(q,A.PQ(q,A.bj(m,B.bW,B.k,B.m),r.d),B.o,q,q,new A.cs(B.i,q,q,o,B.P8,q,B.ai),q,q,q,B.Jt,q,q,q),B.ci,B.a23],n),B.bW,B.k,B.aD),q),B.q9,B.S),q,q),!1,B.at,!0),B.EB,B.db),q,q)}}
 A.azP.prototype={
 $1(a){return new A.tX(this.a,null)},
 $S:620}
@@ -50250,7 +50250,7 @@ return A.y(p.eS(new A.DD(new A.aBb(b),o,!0,0.5625,null,null,null,null,null,f.ry.
 case 2:if(d===!0&&q.c!=null)q.vP()
 return A.B(null,r)}})
 return A.C($async$AH,r)},
-E(a){var s,r=this,q=null,p=t.p,o=A.fG(A.b([A.h4(q,q,q,B.dO,q,q,r.gW1(),q,q,q,"Refresh",q)],p),B.a24)
+E(a){var s,r=this,q=null,p=t.p,o=A.fG(A.b([A.h4(q,q,q,B.dO,q,q,r.gW1(),q,q,q,"Refresh",q)],p),B.a25)
 p=A.b([A.j9(new A.aBf(),r.f,t.eh),B.aq,A.dM(r.d,q,q,"Search booking reference or provider ref",1,!1,new A.aBg(r),B.mp,B.nT,q),B.V,A.xv(A.bF(A.b([r.zB("All",""),B.aV,r.zB("Paid","paid"),B.aV,r.zB("Pending","pending"),B.aV,r.zB("Refunded","refunded")],p),B.p,B.k,B.m,0),q,B.aO)],p)
 p.push(B.bN)
 s=r.e
@@ -50404,12 +50404,12 @@ if(m!=null)B.b.M(n,A.b([B.V,A.Y(m,r,r,r,B.d_,r,r,r)],o))
 n.push(B.ci)
 if(q.d==="paid"){o=s.d
 m=o?r:s.gao8()
-n.push(A.bU(A.r2(B.L7,A.Y(o?"Refunding\u2026":"Refund payment",r,r,r,r,r,r,r),m,r),50,1/0))}else n.push(A.bU(A.aR5(B.a1J,new A.aB8(a)),50,1/0))
+n.push(A.bU(A.r2(B.L7,A.Y(o?"Refunding\u2026":"Refund payment",r,r,r,r,r,r,r),m,r),50,1/0))}else n.push(A.bU(A.aR5(B.a1K,new A.aB8(a)),50,1/0))
 return new A.aA(new A.al(18,18,18,p.f.d+18),A.bj(n,B.G,B.k,B.aD),r)}}
 A.aB4.prototype={
 $1(a){var s=null,r=this.a.a.c,q=t.p
 r=A.bj(A.b([A.Y(A.h8("USD").cJ(r.b)+" will be marked as refunded. This changes the booking balance.",s,s,s,s,s,s,s),B.ab,A.dM(this.b,s,s,"Reason (optional)",1,!1,s,B.qK,s,s)],q),B.p,B.k,B.aD)
-return A.Ad(A.b([A.kn(B.hL,new A.aB2(a),s),A.ma(B.a2w,new A.aB3(a))],q),r,B.a1H)},
+return A.Ad(A.b([A.kn(B.hL,new A.aB2(a),s),A.ma(B.a2w,new A.aB3(a))],q),r,B.a1I)},
 $S:59}
 A.aB2.prototype={
 $0(){return A.c8(this.a,!1).eR(!1)},
@@ -50583,7 +50583,7 @@ m=q.y
 s=m?p:q.gao1()
 n.push(A.bU(A.r2(B.L0,A.Y(m?"Recording\u2026":"Record payment",p,p,p,p,p,p,p),s,p),52,p))
 n.push(B.V)
-n.push(B.a1S)
+n.push(B.a1T)
 return A.eX(o,p,A.PQ(p,A.ir(n,B.bF,p,B.S,!1),q.d),p,p)}}
 A.aCw.prototype={
 $0(){var s=this.a
@@ -50913,7 +50913,7 @@ r.push(B.k_)
 p=!s
 if(p&&q.r==null){o=q.w
 m=o?l:q.gaql()
-B.b.M(r,A.b([A.bU(A.r2(B.KY,A.Y(o?"Preparing\u2026":"Connect an authenticator app",l,l,l,l,l,l,l),m,l),54,l),B.V,B.a1O],n))}if(p&&q.r!=null){p=q.r
+B.b.M(r,A.b([A.bU(A.r2(B.KY,A.Y(o?"Preparing\u2026":"Connect an authenticator app",l,l,l,l,l,l,l),m,l),54,l),B.V,B.a1P],n))}if(p&&q.r!=null){p=q.r
 p.toString
 r.push(new A.a2f(p,q.d,q.w,new A.aEG(q),q.gadk(),q.gJz(),l))}if(s)r.push(new A.Y0(q.e,q.w,q.gaqW(),l))
 return A.ir(r,B.bF,l,B.S,!1)},
@@ -50925,18 +50925,18 @@ $S:0}
 A.a2f.prototype={
 E(a){var s,r,q,p,o=this,n=null,m=o.c,l=A.c6(10),k=A.i9(B.bu),j=t.p
 l=A.cj(n,A.bj(A.b([B.a2d,B.bO,A.aRX(m.ga4S(),B.a_i)],j),B.G,B.k,B.m),B.o,n,n,new A.cs(B.dC,n,k,l,n,n,B.ai),n,n,n,B.fS,n,n,1/0)
-k=A.bU(A.wL(B.KO,B.a25,o.f,n),50,1/0)
+k=A.bU(A.wL(B.KO,B.a26,o.f,n),50,1/0)
 s=A.dM(o.d,"123456",B.nU,"6-digit code",1,!1,new A.aEW(o),B.qR,B.hJ,n)
 r=o.e
 q=A.c7(A.aR5(B.hL,r?n:o.w),1)
 p=r?n:o.r
-return new A.e_(A.bj(A.b([B.a1B,B.V,B.a1o,B.bN,new A.Iv("Account",m.d,n),B.bi,new A.Iv("Issuer",m.c,n),B.ab,l,B.V,k,B.hF,B.a1G,B.V,s,B.bN,A.bF(A.b([q,B.jZ,A.c7(A.ma(A.Y(r?"Checking\u2026":"Turn on 2FA",n,n,n,n,n,n,n),p),2)],j),B.p,B.k,B.m,0)],j),B.G,B.k,B.m),n,n)}}
+return new A.e_(A.bj(A.b([B.a1B,B.V,B.a1o,B.bN,new A.Iv("Account",m.d,n),B.bi,new A.Iv("Issuer",m.c,n),B.ab,l,B.V,k,B.hF,B.a1H,B.V,s,B.bN,A.bF(A.b([q,B.jZ,A.c7(A.ma(A.Y(r?"Checking\u2026":"Turn on 2FA",n,n,n,n,n,n,n),p),2)],j),B.p,B.k,B.m,0)],j),B.G,B.k,B.m),n,n)}}
 A.aEW.prototype={
 $1(a){return this.a.r.$0()},
 $S:29}
 A.Y0.prototype={
 E(a){var s=this,r=null,q=A.dM(s.c,"123456",B.nU,"Current 6-digit code",1,!1,new A.awz(s),B.qR,B.hJ,r),p=s.d,o=p?r:s.e
-return new A.e_(A.bj(A.b([B.a29,B.V,B.a1W,B.bN,q,B.bN,A.bU(A.wL(B.Lr,A.Y(p?"Removing\u2026":"Remove authenticator",r,r,r,r,r,r,r),o,r),50,1/0)],t.p),B.G,B.k,B.m),r,r)}}
+return new A.e_(A.bj(A.b([B.a2a,B.V,B.a1X,B.bN,q,B.bN,A.bU(A.wL(B.Lr,A.Y(p?"Removing\u2026":"Remove authenticator",r,r,r,r,r,r,r),o,r),50,1/0)],t.p),B.G,B.k,B.m),r,r)}}
 A.awz.prototype={
 $1(a){return this.a.e.$0()},
 $S:29}
@@ -51112,14 +51112,14 @@ return A.y(A.A2(null,null,!0,null,new A.aGN(a),p,null,!0,t.y),$async$AU)
 case 2:if(c===!0&&q.c!=null)q.c.a8(t.Pu).f.lQ(A.Uo(null,null,null,null,null,B.F,null,A.Y("Password reset for "+a.b+".",null,null,null,null,null,null,null),null,B.cL,null,null,null,null,null,null,null,null,null,null))
 return A.B(null,r)}})
 return A.C($async$AU,r)},
-E(a){var s=this,r=null,q=t.p,p=A.fG(A.b([A.h4(r,r,r,B.dO,r,r,s.gWs(),r,r,r,"Refresh",r)],q),B.a1T),o=A.dM(s.d,r,r,"Search name, username or email",1,!1,new A.aH3(s),B.mp,B.nT,r),n=s.f,m=n.length===0&&s.r.length===0,l=s.r
+E(a){var s=this,r=null,q=t.p,p=A.fG(A.b([A.h4(r,r,r,B.dO,r,r,s.gWs(),r,r,r,"Refresh",r)],q),B.a1U),o=A.dM(s.d,r,r,"Search name, username or email",1,!1,new A.aH3(s),B.mp,B.nT,r),n=s.f,m=n.length===0&&s.r.length===0,l=s.r
 q=A.b([new A.aA(B.Jf,o,r),new A.aA(B.dI,A.xv(A.bF(A.b([new A.nh("Everyone",m,new A.aH4(s),r),B.aV,new A.nh("Active",n==="active",new A.aH5(s),r),B.aV,new A.nh("Deactivated",n==="inactive",new A.aH6(s),r),B.aV,new A.nh("Admins",l==="admin",new A.aH7(s),r),B.aV,new A.nh("Reception",l==="receptionist",new A.aH8(s),r),B.aV,new A.nh("Guests",l==="guest",new A.aH9(s),r)],q),B.p,B.k,B.m,0),r,B.aO),r)],q)
 o=s.w
 if(o!=null)q.push(new A.aA(B.Je,A.Y(o,r,r,r,B.d_,r,r,r),r))
 o=s.e
 o===$&&A.a()
 q.push(A.c7(A.j9(new A.aHa(s),o,t.a6),1))
-return A.eX(p,r,A.bj(q,B.p,B.k,B.m),r,new A.vV(B.L5,new A.aHb(s),B.a1P,r))}}
+return A.eX(p,r,A.bj(q,B.p,B.k,B.m),r,new A.vV(B.L5,new A.aHb(s),B.a1Q,r))}}
 A.aGM.prototype={
 $0(){var s=this.a
 s.w=null
@@ -51419,7 +51419,7 @@ o.push(B.ab)
 o.push(A.aKz(B.r_,s.as,B.NE,new A.aGH(s),t.N))
 if(s.a.c==null)B.b.M(o,A.b([B.ab,A.dM(s.x,"at least 12 characters, mixed case, number, symbol",r,"Password",1,!0,r,B.fY,r,new A.aGI()),B.ab,A.dM(s.y,r,r,"Confirm password",1,!0,r,B.fY,r,new A.aGJ(s))],p))
 o.push(B.ci)
-o.push(B.a1V)
+o.push(B.a1W)
 o.push(B.bi)
 p=s.z
 p===$&&A.a()
@@ -107686,8 +107686,8 @@ B.h=new A.Ox(0,"sRGB")
 B.ae=new A.K(1,0.788235294117647,0.6352941176470588,0.15294117647058825,B.h)
 B.a8=new A.hz(600)
 B.bR=new A.n(!0,B.ae,null,null,null,null,10.5,B.a8,null,3,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.a1L=new A.aO("SETTINGS & SHORTCUTS",null,B.bR,null,null,null,null,null,null,null)
-B.DQ=new A.e6(B.hU,null,null,B.a1L,null)
+B.a1M=new A.aO("SETTINGS & SHORTCUTS",null,B.bR,null,null,null,null,null,null,null)
+B.DQ=new A.e6(B.hU,null,null,B.a1M,null)
 B.DR=new A.f4(0,1)
 B.DS=new A.f4(0,-1)
 B.kL=new A.f4(1,0)
@@ -108243,11 +108243,11 @@ B.m=new A.R7(1,"max")
 B.G=new A.qN(0,"start")
 B.cB=new A.arJ(1,"down")
 B.Z9=new A.n(!0,B.A,null,"PlayfairDisplay",null,null,22,B.a8,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.a1Q=new A.aO("Find your room",null,B.Z9,null,null,null,null,null,null,null)
+B.a1R=new A.aO("Find your room",null,B.Z9,null,null,null,null,null,null,null)
 B.cU=new A.cm(null,4,null,null)
 B.bk=new A.n(!0,B.as,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.a26=new A.aO("Tap a room class to see details and check availability.",null,B.bk,null,null,null,null,null,null,null)
-B.NI=s([B.a1Q,B.cU,B.a26],t.p)
+B.a27=new A.aO("Tap a room class to see details and check availability.",null,B.bk,null,null,null,null,null,null,null)
+B.NI=s([B.a1R,B.cU,B.a27],t.p)
 B.HI=new A.Bg(B.S,B.k,B.m,B.G,null,B.cB,null,0,B.NI,null)
 B.pG=new A.Bi(0,"none")
 B.HJ=new A.Bi(1,"waiting")
@@ -108945,8 +108945,8 @@ B.ri=s(["BlinkMacSystemFont"],t.s)
 B.NB=s([18,15,10,12,15,18,15,12,12],t.n)
 B.a2t=new A.aO("Active",null,null,null,null,null,null,null,null,null)
 B.ID=new A.hv("active",B.a2t,B.cn,null,t.b7)
-B.a1X=new A.aO("Deactivated",null,null,null,null,null,null,null,null,null)
-B.IB=new A.hv("inactive",B.a1X,B.cn,null,t.b7)
+B.a1Y=new A.aO("Deactivated",null,null,null,null,null,null,null,null,null)
+B.IB=new A.hv("inactive",B.a1Y,B.cn,null,t.b7)
 B.NE=s([B.ID,B.IB],t.FG)
 B.rj=s(["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],t.s)
 B.NF=s(["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],t.s)
@@ -108957,8 +108957,8 @@ B.NJ=s([B.bJ,B.bs,B.cC],A.aD("H<lB>"))
 B.NK=s(["Noto Color Emoji","Noto Sans Symbols","Noto Sans SC","Noto Sans TC","Noto Sans HK","Noto Sans JP","Noto Sans KR"],t.s)
 B.a1r=new A.aO("Paid now",null,null,null,null,null,null,null,null,null)
 B.IC=new A.hv("paid",B.a1r,B.cn,null,t.b7)
-B.a1Y=new A.aO("Promised / pending",null,null,null,null,null,null,null,null,null)
-B.IA=new A.hv("pending",B.a1Y,B.cn,null,t.b7)
+B.a1Z=new A.aO("Promised / pending",null,null,null,null,null,null,null,null,null)
+B.IA=new A.hv("pending",B.a1Z,B.cn,null,t.b7)
 B.NO=s([B.IC,B.IA],t.FG)
 B.b9=new A.fe(0,"icon")
 B.bt=new A.fe(1,"input")
@@ -110239,10 +110239,10 @@ B.hq=new A.wX(0,"none")
 B.Tt=new A.wX(1,"scroll")
 B.Tu=new A.wX(3,"scale")
 B.Tv=new A.wX(4,"unknown")
-B.a1F=new A.aO("Edit details",null,null,null,null,null,null,null,null,null)
-B.Tw=new A.ta("edit",B.a1F,null,t.wI)
-B.a1K=new A.aO("Reset password",null,null,null,null,null,null,null,null,null)
-B.Tx=new A.ta("password",B.a1K,null,t.wI)
+B.a1G=new A.aO("Edit details",null,null,null,null,null,null,null,null,null)
+B.Tw=new A.ta("edit",B.a1G,null,t.wI)
+B.a1L=new A.aO("Reset password",null,null,null,null,null,null,null,null,null)
+B.Tx=new A.ta("password",B.a1L,null,t.wI)
 B.Ty=new A.tb(null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.HH=new A.Bf(B.ae,!0,null,null)
 B.WA=new A.cm(4,null,B.HH,null)
@@ -110585,16 +110585,16 @@ B.WE=new A.lp(3,"hide")
 B.a69=new A.lp(4,"remove")
 B.WF=new A.lp(5,"timeout")
 B.WG=new A.xz(null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.a1U=new A.aO("Setup key copied. Paste it into your authenticator app.",null,null,null,null,null,null,null,null,null)
-B.WH=new A.kj(B.a1U,null,null,null,null,null,null,null,null,null,null,null,null,B.cL,!1,null,null,null,B.F,null)
+B.a1V=new A.aO("Setup key copied. Paste it into your authenticator app.",null,null,null,null,null,null,null,null,null)
+B.WH=new A.kj(B.a1V,null,null,null,null,null,null,null,null,null,null,null,null,B.cL,!1,null,null,null,B.F,null)
 B.a2v=new A.aO("Authenticator removed. Sign-in will no longer ask for a code.",null,null,null,null,null,null,null,null,null)
 B.WI=new A.kj(B.a2v,null,null,null,null,null,null,null,null,null,null,null,null,B.cL,!1,null,null,null,B.F,null)
 B.a2m=new A.aO("Authenticator connected. Sign-in now asks for its code.",null,null,null,null,null,null,null,null,null)
 B.WJ=new A.kj(B.a2m,null,null,null,null,null,null,null,null,null,null,null,null,B.cL,!1,null,null,null,B.F,null)
 B.a2o=new A.aO("A new code has been sent.",null,null,null,null,null,null,null,null,null)
 B.WK=new A.kj(B.a2o,null,null,null,null,null,null,null,null,null,null,null,null,B.cL,!1,null,null,null,B.F,null)
-B.a28=new A.aO("This booking has no active stay to check out.",null,null,null,null,null,null,null,null,null)
-B.WL=new A.kj(B.a28,null,null,null,null,null,null,null,null,null,null,null,null,B.cL,!1,null,null,null,B.F,null)
+B.a29=new A.aO("This booking has no active stay to check out.",null,null,null,null,null,null,null,null,null)
+B.WL=new A.kj(B.a29,null,null,null,null,null,null,null,null,null,null,null,null,B.cL,!1,null,null,null,B.F,null)
 B.CA=new A.FX(0,"permissive")
 B.WM=new A.FX(1,"normal")
 B.WN=new A.FX(2,"forced")
@@ -111037,37 +111037,37 @@ B.a1B=new A.aO("STEP 1 \xb7 ADD THE ACCOUNT",null,B.bR,null,null,null,null,null,
 B.a1C=new A.aO("Rooms by housekeeping status",null,B.f6,null,null,null,null,null,null,null)
 B.Yh=new A.n(!0,B.as,null,null,null,null,11,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.a1D=new A.aO("Server: https://hotel-api-production-9f58.up.railway.app/api",null,B.Yh,B.bQ,null,null,null,null,null,null)
-B.a1E=new A.aO("Your message is passed to the reservations team. No card details are ever requested here.",null,B.k9,null,null,null,null,null,null,null)
-B.a1G=new A.aO("STEP 2 \xb7 CONFIRM",null,B.bR,null,null,null,null,null,null,null)
-B.a1H=new A.aO("Refund this payment?",null,null,null,null,null,null,null,null,null)
-B.a1I=new A.aO("Booking",null,null,null,null,null,null,null,null,null)
-B.a1J=new A.aO("Close",null,null,null,null,null,null,null,null,null)
-B.a1M=new A.aO("PLAN YOUR STAY",null,B.bR,null,null,null,null,null,null,null)
-B.a1N=new A.aO("Open front desk",null,null,null,null,null,null,null,null,null)
-B.a1O=new A.aO("You will be given a setup key to paste into the app, then asked for one code to confirm it works.",null,B.d0,null,null,null,null,null,null,null)
-B.a1P=new A.aO("New user",null,null,null,null,null,null,null,null,null)
-B.a1R=new A.aO("Special requests (optional)",null,B.c2,null,null,null,null,null,null,null)
-B.a1S=new A.aO("Never type a card number, expiry or CVV here. Card payments are recorded using the reference printed by the terminal.",null,B.k9,null,null,null,null,null,null,null)
-B.a1T=new A.aO("Users",null,null,null,null,null,null,null,null,null)
-B.a1V=new A.aO("ROLES",null,B.bR,null,null,null,null,null,null,null)
-B.a1W=new A.aO("Enter a current code to remove the authenticator. Sign-in will then use your password only. If you have lost the app, ask another administrator for help before removing it.",null,B.D3,null,null,null,null,null,null,null)
-B.a1Z=new A.aO("Request reservation",null,null,null,null,null,null,null,null,null)
-B.a2_=new A.aO("Your stay",null,B.c2,null,null,null,null,null,null,null)
+B.a1E=new A.aO("Questions? Call or email us, or send a note below.",null,B.D6,B.bQ,null,null,null,null,null,null)
+B.a1F=new A.aO("Your message is passed to the reservations team. No card details are ever requested here.",null,B.k9,null,null,null,null,null,null,null)
+B.a1H=new A.aO("STEP 2 \xb7 CONFIRM",null,B.bR,null,null,null,null,null,null,null)
+B.a1I=new A.aO("Refund this payment?",null,null,null,null,null,null,null,null,null)
+B.a1J=new A.aO("Booking",null,null,null,null,null,null,null,null,null)
+B.a1K=new A.aO("Close",null,null,null,null,null,null,null,null,null)
+B.a1N=new A.aO("PLAN YOUR STAY",null,B.bR,null,null,null,null,null,null,null)
+B.a1O=new A.aO("Open front desk",null,null,null,null,null,null,null,null,null)
+B.a1P=new A.aO("You will be given a setup key to paste into the app, then asked for one code to confirm it works.",null,B.d0,null,null,null,null,null,null,null)
+B.a1Q=new A.aO("New user",null,null,null,null,null,null,null,null,null)
+B.a1S=new A.aO("Special requests (optional)",null,B.c2,null,null,null,null,null,null,null)
+B.a1T=new A.aO("Never type a card number, expiry or CVV here. Card payments are recorded using the reference printed by the terminal.",null,B.k9,null,null,null,null,null,null,null)
+B.a1U=new A.aO("Users",null,null,null,null,null,null,null,null,null)
+B.a1W=new A.aO("ROLES",null,B.bR,null,null,null,null,null,null,null)
+B.a1X=new A.aO("Enter a current code to remove the authenticator. Sign-in will then use your password only. If you have lost the app, ask another administrator for help before removing it.",null,B.D3,null,null,null,null,null,null,null)
+B.a2_=new A.aO("Request reservation",null,null,null,null,null,null,null,null,null)
+B.a20=new A.aO("Your stay",null,B.c2,null,null,null,null,null,null,null)
 B.D8=new A.aO("Refresh",null,null,null,null,null,null,null,null,null)
 B.D9=new A.aO("Check availability",null,null,null,null,null,null,null,null,null)
-B.a20=new A.aO("Contact",null,null,null,null,null,null,null,null,null)
-B.a21=new A.aO("Front desk",null,null,null,null,null,null,null,null,null)
+B.a21=new A.aO("Contact",null,null,null,null,null,null,null,null,null)
+B.a22=new A.aO("Front desk",null,null,null,null,null,null,null,null,null)
 B.YL=new A.n(!0,B.pC,null,null,null,null,12,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.a22=new A.aO("A second sign-in step protects your account: either the code from your authenticator app, or a one-time code by email.",null,B.YL,B.bQ,null,null,null,null,null,null)
-B.a23=new A.aO("Explore rooms",null,null,null,null,null,null,null,null,null)
-B.a24=new A.aO("Payments",null,null,null,null,null,null,null,null,null)
-B.a25=new A.aO("Copy setup key",null,null,null,null,null,null,null,null,null)
-B.a27=new A.aO("Guests",null,B.c2,null,null,null,null,null,null,null)
+B.a23=new A.aO("A second sign-in step protects your account: either the code from your authenticator app, or a one-time code by email.",null,B.YL,B.bQ,null,null,null,null,null,null)
+B.a24=new A.aO("Explore rooms",null,null,null,null,null,null,null,null,null)
+B.a25=new A.aO("Payments",null,null,null,null,null,null,null,null,null)
+B.a26=new A.aO("Copy setup key",null,null,null,null,null,null,null,null,null)
+B.a28=new A.aO("Guests",null,B.c2,null,null,null,null,null,null,null)
 B.Da=new A.aO("HOTEL & RESORT",null,B.bR,null,null,null,null,null,null,null)
-B.a29=new A.aO("TURN IT OFF",null,B.bR,null,null,null,null,null,null,null)
-B.a2a=new A.aO("Dashboard",null,null,null,null,null,null,null,null,null)
-B.a2b=new A.aO("Payments",null,B.c2,null,null,null,null,null,null,null)
-B.a2c=new A.aO("Questions? Our reservations team replies within one business day.",null,B.D6,B.bQ,null,null,null,null,null,null)
+B.a2a=new A.aO("TURN IT OFF",null,B.bR,null,null,null,null,null,null,null)
+B.a2b=new A.aO("Dashboard",null,null,null,null,null,null,null,null,null)
+B.a2c=new A.aO("Payments",null,B.c2,null,null,null,null,null,null,null)
 B.Zk=new A.n(!0,B.as,null,null,null,null,10,B.an,null,1.4,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.a2d=new A.aO("SETUP KEY",null,B.Zk,null,null,null,null,null,null,null)
 B.a2e=new A.aO("Nights",null,B.ea,null,null,null,null,null,null,null)

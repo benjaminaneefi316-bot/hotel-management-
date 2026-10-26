@@ -8,7 +8,7 @@
     <div class="container">
         <div class="eyebrow text-gold mb-2">Get in touch</div>
         <h1 class="display-serif display-5 text-white mb-2">Contact us</h1>
-        <p class="text-white-50 mb-0">Our reservations team replies to every enquiry within one business day.</p>
+        <p class="text-white-50 mb-0">Call, email, or send us a message using the form below.</p>
     </div>
 </div>
 

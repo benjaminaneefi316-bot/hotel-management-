@@ -121,7 +121,7 @@ final class ApiHotelController extends ApiController
 
         return $this->ok([
             'status' => 'received',
-            'message' => 'Thank you, '.$data['name'].'. Our reservations team will reply within one business day.',
+            'message' => 'Thank you, '.$data['name'].'. Your enquiry has been received.',
         ], 201);
     }
 }

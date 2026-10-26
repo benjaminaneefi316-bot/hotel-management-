@@ -41,6 +41,6 @@ final class ContactController extends Controller
             'subject' => $data['subject'] ?? null,
         ]);
 
-        return back()->with('status', 'Thank you, '.$data['name'].'. Our reservations team will reply within one business day.');
+        return back()->with('status', 'Thank you, '.$data['name'].'. Your enquiry has been received.');
     }
 }

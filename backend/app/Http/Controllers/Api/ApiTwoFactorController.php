@@ -190,7 +190,7 @@ final class ApiTwoFactorController extends ApiController
         $this->audit->success(
             'auth.2fa.enrol.removed',
             'security',
-            sprintf('Authenticator app removed via the app for "%s"; emailed codes are in use.', $user->username),
+            sprintf('Authenticator app removed via the app for "%s"; two-factor authentication is off.', $user->username),
             $user,
         );
 

@@ -142,21 +142,39 @@ middleware. Additional `can:` middleware restricts some routes by role.
 | GET | `/health` | public | — | Liveness probe |
 | GET | `/room-types` | public | — | Active room-type catalogue |
 | GET | `/availability` | public | — | Rooms free for a date window |
+| GET | `/hotel` | public | — | Public hotel content for the app |
+| POST | `/hotel/contact` | public | — | Public contact enquiry |
 | POST | `/auth/login` | public | — | Step 1: verify password |
 | POST | `/auth/two-factor` | public | — | Step 2: exchange OTP for a token |
 | POST | `/auth/resend` | public | — | Resend a fresh OTP |
 | GET | `/auth/me` | bearer | — | Current user profile |
 | POST | `/auth/logout` | bearer | — | Revoke the current token |
 | PUT | `/auth/password` | bearer | — | Change own password |
+| GET | `/two-factor` | bearer | — | Authenticator-app state |
+| POST | `/two-factor/setup` | bearer | — | Start authenticator enrolment |
+| POST | `/two-factor/confirm` | bearer | — | Finish authenticator enrolment |
+| DELETE | `/two-factor` | bearer | — | Turn the second factor off |
 | GET | `/bookings` | bearer | — | List bookings (paginated) |
 | POST | `/bookings` | bearer | — (guests need `book-own-room`) | Create a booking |
 | GET | `/bookings/{booking}` | bearer | — | Show one booking |
 | POST | `/bookings/{booking}/cancel` | bearer | — | Cancel a booking |
 | POST | `/bookings/{booking}/check-in` | bearer | `check-in-out` | Check a guest in |
 | POST | `/stays/{stay}/check-out` | bearer | `check-in-out` | Check a guest out |
+| GET | `/front-desk` | bearer | `check-in-out` | Today's arrivals and departures |
 | GET | `/dashboard/summary` | bearer | `access-staff-area` | Staff KPI summary |
 | GET | `/rooms` | bearer | `access-staff-area` | Full room list |
 | POST | `/payments` | bearer | `access-staff-area`, `manage-payments` | Record a payment |
+| GET | `/payments` | bearer | `manage-payments` | Payment ledger (paginated) |
+| GET | `/payments/summary` | bearer | `manage-payments` | Payment totals |
+| POST | `/payments/{payment}/refund` | bearer | `manage-payments` | Refund a completed payment |
+| GET | `/users` | bearer | `manage-users` | List accounts (paginated) |
+| POST | `/users` | bearer | `manage-users` | Create an account |
+| GET | `/users/{user}` | bearer | `manage-users` | Show an account |
+| PUT | `/users/{user}` | bearer | `manage-users` | Update an account |
+| PUT | `/users/{user}/roles` | bearer | `manage-users` | Replace an account's roles |
+| POST | `/users/{user}/activate` | bearer | `manage-users` | Activate an account |
+| POST | `/users/{user}/deactivate` | bearer | `manage-users` | Deactivate an account |
+| POST | `/users/{user}/password` | bearer | `manage-users` | Reset an account's password |
 
 Roles per ability (from `config/abilities.php`): `check-in-out`,
 `access-staff-area` and `manage-payments` are held by `admin` and
@@ -580,6 +598,166 @@ Response `201`:
   }
 }
 ```
+
+### `GET /hotel`
+
+Public. The same marketing story as the website, so the app never scrapes HTML.
+
+```json
+{
+  "hotel": {
+    "name": "Azure Bay Hotel",
+    "tagline": "Where the ocean sets the pace",
+    "description": "…",
+    "address": "12 Harbour Road",
+    "phone": "+1 555 0100",
+    "email": "stay@example.test",
+    "check_in_time": "15:00",
+    "check_out_time": "11:00",
+    "hero_image": "https://…/assets/img/hero-lobby.jpg",
+    "rating": 4.9,
+    "established": 1998
+  },
+  "stats": [{ "value": "24", "label": "Rooms" }],
+  "amenities": [{ "icon": "pool", "title": "Sea-view pool", "description": "…" }],
+  "gallery": [{ "url": "https://…", "caption": "The pool at dusk" }],
+  "highlights": [{ "title": "…", "body": "…", "image": "https://…" }],
+  "room_types": [{ "id": 1, "name": "Classic", "base_price": 180 }],
+  "featured_room_types": []
+}
+```
+
+Contact details come from system settings, so changing them in the admin
+dashboard updates both the website and the app. Image URLs are absolute.
+
+### `POST /hotel/contact`
+
+Public, rate-limited to 10 requests per minute. Body:
+
+| Field | Rules |
+| --- | --- |
+| `name` | required, max 120 |
+| `email` | required email, max 180 |
+| `phone` | nullable, max 40 |
+| `subject` | nullable, max 150 |
+| `message` | required, 10–5000 characters |
+
+There is no `contact_messages` table, so the fact of the enquiry is written to
+the log **without** the free-text body, matching the website. Response `201`:
+
+```json
+{ "status": "received", "message": "Thank you, Jane. Your enquiry has been received." }
+```
+
+### `GET /front-desk`
+
+Requires `check-in-out`. Returns today's board:
+
+```json
+{
+  "date": "2026-10-26",
+  "arrivals": [{ "id": 84, "status": "confirmed", "can_check_in": true, "stay_id": null }],
+  "departures": [{ "id": 82, "status": "checked_in", "stay_id": 43, "stay_status": "active" }]
+}
+```
+
+Arrivals are `pending` or `confirmed` bookings with `check_in_date` today.
+Departures are `checked_in` bookings whose `check_out_date` is today or earlier.
+Each row is the normal booking payload plus `stay_id` and `stay_status`.
+
+### `GET /two-factor`
+
+Returns the caller's authenticator state. The plain secret is never included.
+
+```json
+{
+  "enabled": true,
+  "channel": "app",
+  "confirmed_at": "2026-10-26T09:00:00+00:00",
+  "user": { "id": 1, "username": "admin" }
+}
+```
+
+`channel` is `app` when an authenticator is enrolled and `email` otherwise
+(the field is kept for older clients; new accounts start with 2FA off).
+
+### `POST /two-factor/setup`
+
+Starts enrolment. The pending secret is cached for 15 minutes, keyed by user
+id, and nothing is written to the account yet. Rate-limited to 6 per minute.
+Response:
+
+```json
+{
+  "status": "pending",
+  "secret": "JBSWY3DPEHPK3PXP",
+  "otpauth_uri": "otpauth://totp/…",
+  "issuer": "Azure Bay Hotel",
+  "account": "admin@example.test",
+  "expires_in": 900
+}
+```
+
+The secret is only ever returned to the authenticated owner. A client that
+cannot scan a QR code on the same device can show the secret for manual entry.
+
+### `POST /two-factor/confirm`
+
+Body: `{ "code": "123456" }`. Verifies a live code against the pending secret;
+only then is the secret saved and `two_factor_enabled` set. Errors: `422`
+`setup_expired` or `invalid_code`, `409` `already_enabled`.
+
+### `DELETE /two-factor`
+
+Body: `{ "code": "123456" }`. Requires a current code. Clears the secret and
+sets `two_factor_enabled` to false, so sign-in falls back to password only.
+(The production mailer is a log, so emailing a fallback code would lock people
+out.) Returns the same status payload as `GET /two-factor`.
+
+### `GET /payments`
+
+Requires `manage-payments`. Paginated (default 25, max 100). Query parameters:
+`status`, `method`, `booking_id`, `search` (booking reference or provider
+reference). Rows include the booking reference, guest name, method label and
+recording user, as well as the fields shown for `POST /payments`.
+
+### `GET /payments/summary`
+
+Requires `manage-payments`. Returns overall totals, not date-filtered:
+
+```json
+{
+  "paid_total": 21234.0,
+  "pending_total": 0.0,
+  "refunded_total": 1837.5,
+  "currency": "USD",
+  "counts": { "paid": 41, "pending": 0, "refunded": 3 },
+  "methods": [{ "value": "card", "label": "Card (tokenised)" }]
+}
+```
+
+### `POST /payments/{payment}/refund`
+
+Requires `manage-payments`. Body: optional `reason` (max 255). Only a `paid`
+payment can be refunded; it becomes `refunded`, `refunded_at` is set, and the
+reason is appended to `notes`. Errors: `422` `not_refundable`.
+
+### `/users` (administrators)
+
+All routes require `manage-users` (the `admin` role) and are audited.
+
+- `GET /users` — paginated; filters `search`, `status`, `role`, `per_page`.
+- `GET /users/roles` — the roles that can be assigned.
+- `POST /users` — `name`, `username` (letters/numbers/`_`/`-`), `email`,
+  optional `phone`, `status`, `password` + `password_confirmation`, `roles`.
+  New accounts always start with 2FA off.
+- `GET /users/{user}` / `PUT /users/{user}` — read or update the profile.
+  Deactivating a user revokes all their bearer tokens.
+- `PUT /users/{user}/roles` — replace roles (at least one).
+- `POST /users/{user}/activate` / `deactivate` — toggle access. The last active
+  administrator, and the account making the request, cannot be deactivated.
+- `POST /users/{user}/password` — `password` + `password_confirmation`;
+  revokes all of that user's tokens.
 
 ## Error responses
 

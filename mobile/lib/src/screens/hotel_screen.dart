@@ -360,7 +360,7 @@ class _HotelScreenState extends State<HotelScreen> {
                         ),
                         const SizedBox(height: 8),
                         const Text(
-                          'Questions? Our reservations team replies within one business day.',
+                          'Questions? Call or email us, or send a note below.',
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.white70, height: 1.4),
                         ),
