@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Enums\BookingStatus;
 use App\Models\Booking;
 use App\Models\CheckIn;
 use App\Models\Guest;
@@ -206,6 +207,7 @@ abstract class ApiController extends Controller
             'special_requests' => $booking->special_requests,
             'can_cancel' => $booking->isCancellable(),
             'can_check_in' => $booking->isCheckInnable(),
+            'can_confirm' => $booking->status === BookingStatus::Pending,
             'guest' => $booking->guest instanceof Guest ? $this->guestPayload($booking->guest) : null,
             'rooms' => $booking->rooms->map(fn (Room $room): array => [
                 'id' => $room->getKey(),

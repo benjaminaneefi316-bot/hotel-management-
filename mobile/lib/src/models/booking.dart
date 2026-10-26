@@ -66,12 +66,14 @@ class Booking {
     required this.balance,
     required this.canCancel,
     required this.canCheckIn,
+    required this.canConfirm,
     required this.rooms,
     required this.payments,
     this.checkInDate,
     this.checkOutDate,
     this.specialRequests,
     this.guest,
+    this.stayId,
   });
 
   final int id;
@@ -86,12 +88,16 @@ class Booking {
   final double balance;
   final bool canCancel;
   final bool canCheckIn;
+  final bool canConfirm;
   final List<BookingRoom> rooms;
   final List<Payment> payments;
   final DateTime? checkInDate;
   final DateTime? checkOutDate;
   final String? specialRequests;
   final BookingGuest? guest;
+
+  /// The active stay, when the guest is already checked in (front desk).
+  final int? stayId;
 
   factory Booking.fromJson(Map<String, dynamic> json) {
     return Booking(
@@ -107,6 +113,7 @@ class Booking {
       balance: (json['balance'] as num?)?.toDouble() ?? 0,
       canCancel: (json['can_cancel'] as bool?) ?? false,
       canCheckIn: (json['can_check_in'] as bool?) ?? false,
+      canConfirm: (json['can_confirm'] as bool?) ?? false,
       rooms: ((json['rooms'] as List?) ?? const [])
           .whereType<Map<String, dynamic>>()
           .map(BookingRoom.fromJson)
@@ -121,6 +128,7 @@ class Booking {
       guest: json['guest'] is Map<String, dynamic>
           ? BookingGuest.fromJson(json['guest'] as Map<String, dynamic>)
           : null,
+      stayId: (json['stay_id'] as num?)?.toInt(),
     );
   }
 }

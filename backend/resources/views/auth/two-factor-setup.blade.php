@@ -98,7 +98,7 @@
 
         <div class="text-center mt-3">
             <a href="{{ route('profile.edit') }}" class="btn btn-link btn-sm link-secondary p-0">
-                <i class="bi bi-arrow-left me-1"></i> Cancel, keep using emailed codes
+                <i class="bi bi-arrow-left me-1"></i> Cancel and go back to my profile
             </a>
         </div>
     @endif

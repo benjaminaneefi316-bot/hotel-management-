@@ -1,6 +1,7 @@
 import '../api/api_client.dart';
 import '../models/booking.dart';
 import '../models/dashboard_summary.dart';
+import '../models/front_desk.dart';
 import '../models/room.dart';
 import '../models/room_type.dart';
 
@@ -99,6 +100,28 @@ class HotelRepository {
     await _api.post('/bookings/$id/cancel', body: {
       if (reason != null && reason.isNotEmpty) 'reason': reason,
     });
+  }
+
+  /// Confirm a pending booking so it can be checked in.
+  Future<Booking> confirmBooking(int id) async {
+    final response = await _api.post('/bookings/$id/confirm');
+    return Booking.fromJson(response['data'] as Map<String, dynamic>);
+  }
+
+  /// Today's arrivals and departures (front desk).
+  Future<FrontDeskDay> frontDesk() async {
+    final response = await _api.get('/front-desk');
+    return FrontDeskDay.fromJson(response);
+  }
+
+  /// Check a guest in. The API assigns the booking's first room.
+  Future<void> checkIn(int bookingId) async {
+    await _api.post('/bookings/$bookingId/check-in');
+  }
+
+  /// Check a guest out of an active stay.
+  Future<void> checkOut(int stayId) async {
+    await _api.post('/stays/$stayId/check-out');
   }
 
   /// Staff KPI summary.

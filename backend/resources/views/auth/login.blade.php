@@ -43,8 +43,9 @@
 
     <div class="alert alert-light border small mt-4 mb-0">
         <i class="bi bi-shield-lock me-1"></i>
-        For your security, a one-time code is emailed after your password is verified.
-        Accounts are locked temporarily after repeated failed attempts.
+        If two-factor sign-in is on, your authenticator app's 6-digit code is requested
+        after your password is verified. Accounts are locked temporarily after repeated
+        failed attempts.
     </div>
 
     <p class="text-center text-muted-soft small mt-4 mb-0">

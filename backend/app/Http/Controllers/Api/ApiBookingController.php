@@ -141,6 +141,19 @@ final class ApiBookingController extends ApiController
         return $this->ok(['status' => 'cancelled', 'reference' => $booking->reference]);
     }
 
+    public function confirm(Request $request, Booking $booking): JsonResponse
+    {
+        try {
+            $booking = $this->bookings->confirm($booking, $request->user());
+        } catch (BusinessRuleException $e) {
+            return $this->fail($e->getMessage(), 409, 'confirm_failed');
+        }
+
+        $booking->load(['guest', 'rooms.roomType', 'payments']);
+
+        return $this->ok(['data' => $this->bookingPayload($booking, $request->user())]);
+    }
+
     private function isStaff(User $user): bool
     {
         return $user->isAdmin() || $user->isReceptionist();

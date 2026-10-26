@@ -7,6 +7,7 @@ import 'package:azure_bay_mobile/src/api/hotel_repository.dart';
 import 'package:azure_bay_mobile/src/auth/auth_repository.dart';
 import 'package:azure_bay_mobile/src/models/app_user.dart';
 import 'package:azure_bay_mobile/src/models/booking.dart';
+import 'package:azure_bay_mobile/src/models/front_desk.dart';
 import 'package:azure_bay_mobile/src/models/room_type.dart';
 import 'package:azure_bay_mobile/src/screens/login_screen.dart';
 import 'package:azure_bay_mobile/src/state/session_controller.dart';
@@ -160,6 +161,39 @@ void main() {
       expect(booking.payments.single.currency, 'USD');
       expect(booking.canCancel, isTrue);
       expect(booking.balance, 260);
+    });
+
+    test('FrontDeskDay reads arrivals, departures and the stay id', () {
+      Map<String, dynamic> booking(int id, String reference) => {
+            'id': id,
+            'reference': reference,
+            'status': 'checked_in',
+            'status_label': 'In house',
+            'nights': 2,
+            'adults': 2,
+            'children': 0,
+            'total_amount': 360,
+            'paid_amount': 100,
+            'balance': 260,
+            'can_cancel': false,
+            'can_check_in': false,
+            'can_confirm': false,
+            'stay_id': 77,
+            'guest': {'full_name': 'Mei Tanaka'},
+            'rooms': [],
+            'payments': [],
+          };
+
+      final day = FrontDeskDay.fromJson({
+        'date': '2026-10-26',
+        'arrivals': [booking(1, 'AB-1')],
+        'departures': [booking(2, 'AB-2')],
+      });
+
+      expect(day.arrivals.single.reference, 'AB-1');
+      expect(day.departures.single.stayId, 77);
+      expect(day.departures.single.guest?.fullName, 'Mei Tanaka');
+      expect(day.isEmpty, isFalse);
     });
   });
 }

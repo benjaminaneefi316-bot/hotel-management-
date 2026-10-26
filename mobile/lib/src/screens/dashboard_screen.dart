@@ -7,6 +7,9 @@ import '../state/session_controller.dart';
 import '../theme/app_theme.dart';
 import '../util/formatters.dart';
 import '../widgets/app_widgets.dart';
+import 'front_desk_screen.dart';
+import 'my_bookings_screen.dart';
+import 'rooms_screen.dart';
 
 /// Staff home: today's operational KPIs and a housekeeping breakdown.
 class DashboardScreen extends StatefulWidget {
@@ -30,6 +33,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   void _reload() => setState(() => _future = _load());
 
+  Future<void> _open(Widget screen) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => screen),
+    );
+    if (mounted) {
+      _reload();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = context.watch<SessionController>().user;
@@ -38,11 +50,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         title: const Text('Dashboard'),
         actions: [
-          IconButton(
-            tooltip: 'Refresh',
+          TextButton.icon(
             onPressed: _reload,
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh, size: 20),
+            label: const Text('Refresh'),
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: FutureBuilder<DashboardSummary>(
@@ -77,6 +90,68 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   style: const TextStyle(color: AppTheme.muted),
                 ),
                 const SizedBox(height: 16),
+                Panel(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('TODAY AT THE FRONT DESK', style: AppTheme.eyebrow),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _Count(
+                              value: '${summary.arrivalsToday}',
+                              label: 'Arriving',
+                              icon: Icons.login,
+                            ),
+                          ),
+                          Container(
+                            width: 1,
+                            height: 42,
+                            color: AppTheme.border,
+                          ),
+                          Expanded(
+                            child: _Count(
+                              value: '${summary.departuresToday}',
+                              label: 'Leaving',
+                              icon: Icons.logout,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: FilledButton.icon(
+                          onPressed: () => _open(const FrontDeskScreen()),
+                          icon: const Icon(Icons.support_agent, size: 21),
+                          label: const Text('Open front desk'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text('QUICK ACTIONS', style: AppTheme.eyebrow),
+                const SizedBox(height: 10),
+                ActionTile(
+                  icon: Icons.event_note,
+                  title: 'All bookings',
+                  subtitle: 'Search, open and cancel reservations',
+                  onTap: () => _open(const MyBookingsScreen()),
+                ),
+                const SizedBox(height: 10),
+                ActionTile(
+                  icon: Icons.meeting_room_outlined,
+                  title: 'Rooms',
+                  subtitle: 'See every room and its housekeeping status',
+                  onTap: () => _open(const RoomsScreen()),
+                ),
+                const SizedBox(height: 22),
+                const Text('TODAY AT A GLANCE', style: AppTheme.eyebrow),
+                const SizedBox(height: 10),
                 GridView.count(
                   crossAxisCount: 2,
                   shrinkWrap: true,
@@ -89,16 +164,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       icon: Icons.login,
                       label: 'Arrivals today',
                       value: '${summary.arrivalsToday}',
+                      onTap: () => _open(const FrontDeskScreen()),
                     ),
                     KpiTile(
                       icon: Icons.logout,
                       label: 'Departures today',
                       value: '${summary.departuresToday}',
+                      onTap: () => _open(const FrontDeskScreen()),
                     ),
                     KpiTile(
                       icon: Icons.king_bed_outlined,
                       label: 'In house',
                       value: '${summary.inHouse}',
+                      onTap: () => _open(const MyBookingsScreen()),
                     ),
                     KpiTile(
                       icon: Icons.pie_chart_outline,
@@ -114,6 +192,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       icon: Icons.hourglass_bottom,
                       label: 'Pending bookings',
                       value: '${summary.pendingBookings}',
+                      onTap: () => _open(const MyBookingsScreen()),
                     ),
                   ],
                 ),
@@ -161,6 +240,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
           );
         },
       ),
+    );
+  }
+}
+
+class _Count extends StatelessWidget {
+  const _Count({required this.value, required this.label, required this.icon});
+
+  final String value;
+  final String label;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Icon(icon, color: AppTheme.gold, size: 20),
+        const SizedBox(height: 4),
+        Text(value, style: AppTheme.display(26, weight: FontWeight.w700)),
+        Text(
+          label,
+          style: const TextStyle(
+            color: AppTheme.muted,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 }
