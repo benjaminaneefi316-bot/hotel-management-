@@ -43,6 +43,16 @@ class BookingSeeder extends Seeder
 {
     public const TARGET = 80;
 
+    /** @var string[] */
+    private const SPECIAL_REQUESTS = [
+        'High floor with a sea view if possible.',
+        'Late arrival, around 22:00.',
+        'Twin beds please.',
+        'Quiet room away from the lift.',
+        'Celebrating an anniversary.',
+        'Travel cot needed for a toddler.',
+    ];
+
     public function run(): void
     {
         $rooms = Room::query()
@@ -76,10 +86,10 @@ class BookingSeeder extends Seeder
 
         DB::transaction(function () use ($rooms, $guests, $staff, $service, $today, $actor, &$created, &$skipped, &$guestCursor): void {
             foreach ($rooms as $room) {
-                $cursor = $today->subDays(fake()->numberBetween(100, 130));
+                $cursor = $today->subDays($this->between(100, 130));
 
                 while ($cursor->lessThan($today->addDays(45)) && $created < self::TARGET) {
-                    $nights = fake()->numberBetween(1, 6);
+                    $nights = $this->between(1, 6);
                     $checkIn = $cursor;
                     $checkOut = $cursor->addDays($nights);
 
@@ -95,11 +105,11 @@ class BookingSeeder extends Seeder
                             'check_in_date' => $checkIn->toDateString(),
                             'check_out_date' => $checkOut->toDateString(),
                             'room_ids' => [$room->getKey()],
-                            'adults' => fake()->numberBetween(1, 2),
-                            'children' => fake()->numberBetween(0, 2),
-                            'source' => fake()->randomElement(['website', 'phone', 'walk_in', 'ota']),
+                            'adults' => $this->between(1, 2),
+                            'children' => $this->between(0, 2),
+                            'source' => $this->pick(['website', 'phone', 'walk_in', 'ota']),
                             'status' => BookingStatus::Confirmed->value,
-                            'special_requests' => fake()->boolean(25) ? fake()->sentence() : null,
+                            'special_requests' => $this->chance(25) ? $this->pick(self::SPECIAL_REQUESTS) : null,
                         ], $staff->random());
                     } catch (BusinessRuleException) {
                         // Slot collided: move on rather than double-book.
@@ -112,7 +122,7 @@ class BookingSeeder extends Seeder
                     $this->applyOutcome($booking, $room, $status, $nights, $today);
                     $created++;
 
-                    $cursor = $checkOut->addDays(fake()->numberBetween(0, 6));
+                    $cursor = $checkOut->addDays($this->between(0, 6));
                 }
 
                 if ($created >= self::TARGET) {
@@ -127,11 +137,32 @@ class BookingSeeder extends Seeder
         $this->command->info('Stays: '.CheckIn::query()->count().' | Payments: '.Payment::query()->count());
     }
 
+    private function between(int $min, int $max): int
+    {
+        return random_int($min, $max);
+    }
+
+    /**
+     * @template T
+     *
+     * @param  array<int, T>  $values
+     * @return T
+     */
+    private function pick(array $values): mixed
+    {
+        return $values[array_rand($values)];
+    }
+
+    private function chance(int $percent): bool
+    {
+        return $this->between(1, 100) <= $percent;
+    }
+
     /** Decide what happened to a stay based on where it sits relative to today. */
     private function statusFor(CarbonImmutable $checkIn, CarbonImmutable $checkOut, CarbonImmutable $today): BookingStatus
     {
         if ($checkOut->lessThanOrEqualTo($today)) {
-            $roll = fake()->numberBetween(1, 100);
+            $roll = $this->between(1, 100);
 
             return match (true) {
                 $roll <= 82 => BookingStatus::CheckedOut,
@@ -144,7 +175,7 @@ class BookingSeeder extends Seeder
             return BookingStatus::CheckedIn;
         }
 
-        return fake()->numberBetween(1, 100) <= 85
+        return $this->between(1, 100) <= 85
             ? BookingStatus::Confirmed
             : BookingStatus::Pending;
     }
@@ -168,9 +199,9 @@ class BookingSeeder extends Seeder
                     'room_id' => $room->getKey(),
                     'guest_id' => $booking->guest_id,
                     'status' => StayStatus::Completed,
-                    'checked_in_at' => $booking->check_in_date->setTime(15, fake()->numberBetween(0, 59)),
+                    'checked_in_at' => $booking->check_in_date->setTime(15, $this->between(0, 59)),
                     'checked_in_by' => $booking->user_id,
-                    'checked_out_at' => $booking->check_out_date->setTime(11, fake()->numberBetween(0, 59)),
+                    'checked_out_at' => $booking->check_out_date->setTime(11, $this->between(0, 59)),
                     'checked_out_by' => $booking->user_id,
                     'actual_nights' => $nights,
                 ]);
@@ -203,7 +234,7 @@ class BookingSeeder extends Seeder
             case BookingStatus::Cancelled:
                 $booking->forceFill([
                     'status' => BookingStatus::Cancelled,
-                    'cancelled_at' => $booking->check_in_date->subDays(fake()->numberBetween(1, 14)),
+                    'cancelled_at' => $booking->check_in_date->subDays($this->between(1, 14)),
                     'internal_notes' => 'Cancelled by guest.',
                 ])->save();
 
@@ -225,9 +256,9 @@ class BookingSeeder extends Seeder
             default:
                 // Future arrival: Confirmed (usually with a deposit) or Pending.
                 if ($status === BookingStatus::Confirmed) {
-                    $booking->forceFill(['confirmed_at' => now()->subDays(fake()->numberBetween(1, 20))])->save();
+                    $booking->forceFill(['confirmed_at' => now()->subDays($this->between(1, 20))])->save();
 
-                    if (fake()->boolean(70)) {
+                    if ($this->chance(70)) {
                         $this->pay($booking, round($total * 0.3, 2), PaymentStatus::Paid);
                     }
                 }
@@ -247,14 +278,14 @@ class BookingSeeder extends Seeder
             'user_id' => $booking->user_id,
             'amount' => $amount,
             'currency' => 'USD',
-            'method' => fake()->randomElement(PaymentMethod::cases()),
+            'method' => $this->pick(PaymentMethod::cases()),
             'status' => $status,
             'provider' => 'stripe',
             'provider_reference' => 'tok_'.Str::random(18),
             'paid_at' => $status === PaymentStatus::Paid
-                ? $booking->check_in_date->subDays(fake()->numberBetween(0, 5))
+                ? $booking->check_in_date->subDays($this->between(0, 5))
                 : null,
-            'refunded_at' => $status === PaymentStatus::Refunded ? now()->subDays(fake()->numberBetween(1, 20)) : null,
+            'refunded_at' => $status === PaymentStatus::Refunded ? now()->subDays($this->between(1, 20)) : null,
             'notes' => $status === PaymentStatus::Refunded ? 'Refunded after cancellation.' : null,
         ]);
     }

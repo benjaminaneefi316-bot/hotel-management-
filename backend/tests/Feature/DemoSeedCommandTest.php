@@ -7,15 +7,21 @@ namespace Tests\Feature;
 use App\Models\Booking;
 use App\Models\Guest;
 use App\Models\User;
+use Database\Seeders\RoleSeeder;
+use Database\Seeders\RoomSeeder;
+use Database\Seeders\RoomTypeSeeder;
+use Database\Seeders\SystemSettingSeeder;
+use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
  * The container runs `php artisan demo:seed` on boot when RUN_SEEDERS=true.
  *
- * GuestSeeder / BookingSeeder are not idempotent, so the command must seed only
- * a database that is still empty — otherwise every restart would add another 60
- * guests. These tests pin both behaviours.
+ * GuestSeeder / BookingSeeder are not idempotent, so the command must never run
+ * them twice. It also has to repair a half-seeded database (the production
+ * image once skipped guests because Faker was unavailable) without touching the
+ * accounts. These tests pin all three behaviours.
  */
 class DemoSeedCommandTest extends TestCase
 {
@@ -51,5 +57,34 @@ class DemoSeedCommandTest extends TestCase
 
         $this->assertSame($guests, Guest::query()->count());
         $this->assertSame($users, User::query()->count());
+    }
+
+    public function test_it_fills_missing_stays_without_resetting_accounts(): void
+    {
+        $this->seed(RoleSeeder::class);
+        $this->seed(UserSeeder::class);
+        $this->seed(SystemSettingSeeder::class);
+        $this->seed(RoomTypeSeeder::class);
+        $this->seed(RoomSeeder::class);
+
+        $this->assertSame(0, Guest::query()->count());
+        $this->assertSame(0, Booking::query()->count());
+
+        $users = User::query()->count();
+        $password = User::query()
+            ->where('email', 'benjaminaneefi316@gmail.com')
+            ->value('password');
+
+        $this->artisan('demo:seed')
+            ->expectsOutputToContain('No guests found')
+            ->assertSuccessful();
+
+        $this->assertSame($users, User::query()->count());
+        $this->assertSame(
+            $password,
+            User::query()->where('email', 'benjaminaneefi316@gmail.com')->value('password'),
+        );
+        $this->assertGreaterThanOrEqual(50, Guest::query()->count());
+        $this->assertGreaterThanOrEqual(50, Booking::query()->count());
     }
 }

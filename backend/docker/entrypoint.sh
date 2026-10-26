@@ -54,19 +54,21 @@ if [ "${RUN_MIGRATIONS:-false}" = "true" ]; then
   php artisan migrate --force || echo "[entrypoint] WARNING: migrations failed (continuing)"
 fi
 
-# Optional: seed the demo dataset. `demo:seed` is guarded, so it only does
-# anything when the database is still empty - safe to leave enabled.
-if [ "${RUN_SEEDERS:-false}" = "true" ]; then
-  echo "[entrypoint] seeding demo data (skipped if data already exists)..."
-  php artisan demo:seed || echo "[entrypoint] WARNING: demo seed failed (continuing)"
-fi
-
 # Cache configuration/routes/views for production performance.
 if [ "${CACHE_APP_CONFIG:-true}" = "true" ]; then
   echo "[entrypoint] caching config/routes/views..."
   php artisan config:cache || echo "[entrypoint] WARNING: config:cache failed (continuing)"
   php artisan route:cache || echo "[entrypoint] WARNING: route:cache failed (continuing)"
   php artisan view:cache || echo "[entrypoint] WARNING: view:cache failed (continuing)"
+fi
+
+# Optional: seed the demo dataset. This runs in the background so a large
+# first-time seed (60 guests + 80 bookings) can never delay the healthcheck.
+# `demo:seed` is guarded: it fills missing guests/bookings and never resets
+# accounts, so it is safe to leave RUN_SEEDERS=true on every boot.
+if [ "${RUN_SEEDERS:-false}" = "true" ]; then
+  echo "[entrypoint] seeding demo data in the background (guarded)..."
+  nohup php artisan demo:seed >> storage/logs/demo-seed.log 2>&1 &
 fi
 
 echo "[entrypoint] launching: $*"
