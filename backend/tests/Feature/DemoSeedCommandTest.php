@@ -7,6 +7,8 @@ namespace Tests\Feature;
 use App\Models\Booking;
 use App\Models\Guest;
 use App\Models\User;
+use Database\Seeders\BookingSeeder;
+use Database\Seeders\GuestSeeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\RoomSeeder;
 use Database\Seeders\RoomTypeSeeder;
@@ -86,5 +88,36 @@ class DemoSeedCommandTest extends TestCase
         );
         $this->assertGreaterThanOrEqual(50, Guest::query()->count());
         $this->assertGreaterThanOrEqual(50, Booking::query()->count());
+    }
+
+    public function test_it_always_leaves_a_useful_front_desk_board_for_today(): void
+    {
+        $this->seed(RoleSeeder::class);
+        $this->seed(UserSeeder::class);
+        $this->seed(SystemSettingSeeder::class);
+        $this->seed(RoomTypeSeeder::class);
+        $this->seed(RoomSeeder::class);
+        $this->seed(GuestSeeder::class);
+
+        $seeder = new BookingSeeder();
+        $today = now()->toDateString();
+
+        $this->assertSame(4, $seeder->ensureTodayBoard());
+
+        $this->assertSame(2, Booking::query()
+            ->whereDate('check_in_date', $today)
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->count());
+        $this->assertSame(1, Booking::query()
+            ->whereDate('check_in_date', $today)
+            ->where('status', 'pending')
+            ->count());
+        $this->assertSame(2, Booking::query()
+            ->whereDate('check_out_date', $today)
+            ->where('status', 'checked_in')
+            ->count());
+
+        // A second boot must not manufacture more fake guests.
+        $this->assertSame(0, $seeder->ensureTodayBoard());
     }
 }

@@ -133,8 +133,136 @@ class BookingSeeder extends Seeder
 
         $this->refreshRoomStatuses();
 
+        $board = $this->ensureTodayBoard();
+        if ($board > 0) {
+            $this->command?->info("Front-desk demo stays for today: {$board}");
+        }
+
         $this->command->info("Bookings seeded: {$created}".($skipped > 0 ? " ({$skipped} slot collision(s) skipped)" : ''));
         $this->command->info('Stays: '.CheckIn::query()->count().' | Payments: '.Payment::query()->count());
+    }
+
+    /**
+     * Make sure the mobile front desk has a useful board on the demo day:
+     * two arrivals (one still pending, one confirmed) and two in-house guests
+     * due out today. Safe to call on every boot: it only fills a gap, never
+     * duplicates a board that already exists.
+     */
+    public function ensureTodayBoard(): int
+    {
+        $today = CarbonImmutable::now()->startOfDay();
+
+        $arrivals = Booking::query()
+            ->whereDate('check_in_date', $today->toDateString())
+            ->whereIn('status', [BookingStatus::Pending->value, BookingStatus::Confirmed->value])
+            ->count();
+
+        $departures = Booking::query()
+            ->whereDate('check_out_date', $today->toDateString())
+            ->where('status', BookingStatus::CheckedIn->value)
+            ->count();
+
+        $needArrivals = max(0, 2 - $arrivals);
+        $needDepartures = max(0, 2 - $departures);
+
+        if ($needArrivals === 0 && $needDepartures === 0) {
+            return 0;
+        }
+
+        $rooms = Room::query()
+            ->where('is_active', true)
+            ->whereNotIn('status', [RoomStatus::Maintenance->value, RoomStatus::OutOfService->value])
+            ->orderBy('id')
+            ->get();
+
+        $guests = Guest::query()->orderBy('id')->get();
+
+        $staff = User::query()
+            ->whereHas('roles', fn ($q) => $q->whereIn('name', ['admin', 'receptionist']))
+            ->orderBy('id')
+            ->get();
+
+        if ($rooms->isEmpty() || $guests->isEmpty() || $staff->isEmpty()) {
+            return 0;
+        }
+
+        /** @var BookingService $service */
+        $service = app(BookingService::class);
+
+        $usedRooms = [];
+        $added = 0;
+        $guestCursor = (int) (Booking::query()->max('id') ?? 0);
+
+        $make = function (CarbonImmutable $checkIn, CarbonImmutable $checkOut, BookingStatus $outcome) use (&$usedRooms, &$added, &$guestCursor, $rooms, $guests, $staff, $service, $today): bool {
+            $nights = (int) $checkIn->diffInDays($checkOut);
+
+            foreach ($rooms as $room) {
+                if (in_array($room->getKey(), $usedRooms, true)) {
+                    continue;
+                }
+
+                if ($service->hasOverlap($room->getKey(), $checkIn, $checkOut)) {
+                    continue;
+                }
+
+                $guest = $guests[$guestCursor % $guests->count()];
+                $guestCursor++;
+
+                try {
+                    /** @var Booking $booking */
+                    $booking = $service->create([
+                        'guest_id' => $guest->getKey(),
+                        'check_in_date' => $checkIn->toDateString(),
+                        'check_out_date' => $checkOut->toDateString(),
+                        'room_ids' => [$room->getKey()],
+                        'adults' => 2,
+                        'children' => 0,
+                        'source' => 'phone',
+                        'status' => $outcome === BookingStatus::Pending
+                            ? BookingStatus::Pending->value
+                            : BookingStatus::Confirmed->value,
+                        'special_requests' => 'Demo booking for the front-desk walkthrough.',
+                    ], $staff->random());
+                } catch (BusinessRuleException) {
+                    continue;
+                }
+
+                $this->applyOutcome($booking, $room, $outcome, $nights, $today);
+                $usedRooms[] = $room->getKey();
+                $added++;
+
+                return true;
+            }
+
+            return false;
+        };
+
+        for ($i = 0; $i < $needDepartures; $i++) {
+            if (! $make($today->subDays(2), $today, BookingStatus::CheckedIn)) {
+                break;
+            }
+        }
+
+        // A pending arrival shows the "Confirm" action; a confirmed one shows
+        // "Check in", so the demo exercises both paths.
+        $pendingExists = Booking::query()
+            ->whereDate('check_in_date', $today->toDateString())
+            ->where('status', BookingStatus::Pending->value)
+            ->exists();
+
+        for ($i = 0; $i < $needArrivals; $i++) {
+            $status = $pendingExists ? BookingStatus::Confirmed : BookingStatus::Pending;
+            if (! $make($today, $today->addDays(2), $status)) {
+                break;
+            }
+            $pendingExists = true;
+        }
+
+        if ($added > 0) {
+            $this->refreshRoomStatuses();
+        }
+
+        return $added;
     }
 
     private function between(int $min, int $max): int

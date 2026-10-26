@@ -79,6 +79,11 @@ class SeedDemoData extends Command
             $this->call('db:seed', ['--class' => AuditLogSeeder::class, '--force' => true]);
         }
 
+        $board = (new BookingSeeder)->ensureTodayBoard();
+        if ($board > 0) {
+            $this->info("Added {$board} front-desk demo stay(s) for today.");
+        }
+
         if (! $filled) {
             $this->info('Demo data is already complete; skipping demo seed.');
         }
