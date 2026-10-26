@@ -32,7 +32,7 @@
         </p>
 
         <form method="POST" action="{{ route('two-factor.remove') }}"
-              onsubmit="return confirm('Remove the authenticator app? Sign-in codes will be emailed instead.');">
+              onsubmit="return confirm('Remove the authenticator app? Two-factor authentication will be turned off and sign-in will use your password only.');">
             @csrf
             @method('DELETE')
             <button type="submit" class="btn btn-outline-danger w-100 py-2">

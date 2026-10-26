@@ -4,9 +4,11 @@ import 'package:provider/provider.dart';
 import '../api/api_exception.dart';
 import '../api/hotel_repository.dart';
 import '../models/booking.dart';
+import '../state/session_controller.dart';
 import '../theme/app_theme.dart';
 import '../util/formatters.dart';
 import '../widgets/app_widgets.dart';
+import 'record_payment_screen.dart';
 
 /// Full detail for one reservation, with a cancel action when permitted.
 class BookingDetailScreen extends StatefulWidget {
@@ -34,8 +36,23 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
 
   void _reload() => setState(() => _future = _load());
 
-  Future<void> _cancel(Booking booking) async {
-    final confirmed = await showDialog<bool>(
+  Future<void> _recordPayment(Booking booking) async {
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(
+        builder: (_) => RecordPaymentScreen(
+          bookingId: booking.id,
+          reference: booking.reference,
+          balance: booking.balance,
+        ),
+      ),
+    );
+
+    if (saved == true && mounted) {
+      _reload();
+    }
+  }
+
+  Future<void> _cancel(Booking booking) async {    final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Cancel booking?'),
@@ -210,6 +227,20 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     _KV('Total', Fmt.money(booking.totalAmount)),
                     _KV('Paid', Fmt.money(booking.paidAmount)),
                     _KV('Balance', Fmt.money(booking.balance)),
+                    if (context.watch<SessionController>().isStaff &&
+                        booking.balance > 0 &&
+                        booking.status != 'cancelled') ...[
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: OutlinedButton.icon(
+                          onPressed: () => _recordPayment(booking),
+                          icon: const Icon(Icons.add_card, size: 19),
+                          label: const Text('Record a payment'),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),

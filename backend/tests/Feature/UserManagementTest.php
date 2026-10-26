@@ -107,6 +107,8 @@ class UserManagementTest extends TestCase
     {
         $admin = User::factory()->admin()->create();
         $staff = User::factory()->receptionist()->withoutTwoFactor()->create([
+            'username' => 'enrolledstaff',
+            'email' => 'enrolledstaff@example.test',
             'two_factor_secret' => 'JBSWY3DPEHPK3PXP',
             'two_factor_confirmed_at' => now(),
         ]);

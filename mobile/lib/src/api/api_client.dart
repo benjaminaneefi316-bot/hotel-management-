@@ -85,6 +85,12 @@ class ApiClient {
   }) =>
       _send('PUT', path, body: body);
 
+  Future<Map<String, dynamic>> delete(
+    String path, {
+    Map<String, dynamic>? body,
+  }) =>
+      _send('DELETE', path, body: body);
+
   Uri _uri(String path, Map<String, dynamic>? query) {
     final normalised = path.startsWith('/') ? path : '/$path';
     final uri = Uri.parse('$baseUrl$normalised');
@@ -128,6 +134,9 @@ class ApiClient {
           break;
         case 'PUT':
           response = await _http.put(uri, headers: headers, body: payload);
+          break;
+        case 'DELETE':
+          response = await _http.delete(uri, headers: headers, body: payload);
           break;
         default:
           throw ArgumentError('Unsupported HTTP method: $method');

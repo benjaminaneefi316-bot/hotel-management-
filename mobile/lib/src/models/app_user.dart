@@ -18,6 +18,9 @@ class AppUser {
   final bool isStaff;
   final int? guestProfileId;
 
+  /// Owners get the extra user-management screens.
+  bool get isAdmin => roles.contains('admin');
+
   factory AppUser.fromJson(Map<String, dynamic> json) {
     return AppUser(
       id: (json['id'] as num).toInt(),

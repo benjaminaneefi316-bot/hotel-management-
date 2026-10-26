@@ -8,8 +8,12 @@ import '../theme/app_theme.dart';
 import '../util/formatters.dart';
 import '../widgets/app_widgets.dart';
 import 'front_desk_screen.dart';
+import 'hotel_screen.dart';
 import 'my_bookings_screen.dart';
+import 'payments_screen.dart';
 import 'rooms_screen.dart';
+import 'security_screen.dart';
+import 'users_screen.dart';
 
 /// Staff home: today's operational KPIs and a housekeeping breakdown.
 class DashboardScreen extends StatefulWidget {
@@ -148,6 +152,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   title: 'Rooms',
                   subtitle: 'See every room and its housekeeping status',
                   onTap: () => _open(const RoomsScreen()),
+                ),
+                const SizedBox(height: 10),
+                ActionTile(
+                  icon: Icons.payments_outlined,
+                  title: 'Payments',
+                  subtitle: 'Taken today, pending balance and refunds',
+                  onTap: () => _open(const PaymentsScreen()),
+                ),
+                if (user?.isAdmin ?? false) ...[
+                  const SizedBox(height: 10),
+                  ActionTile(
+                    icon: Icons.manage_accounts_outlined,
+                    title: 'Users',
+                    subtitle: 'Add staff, reset passwords, switch accounts off',
+                    onTap: () => _open(const UsersScreen()),
+                  ),
+                ],
+                const SizedBox(height: 10),
+                ActionTile(
+                  icon: Icons.storefront_outlined,
+                  title: 'Hotel website',
+                  subtitle: 'The same rooms, gallery and contact page guests see',
+                  onTap: () => _open(const HotelScreen()),
+                ),
+                const SizedBox(height: 10),
+                ActionTile(
+                  icon: Icons.verified_user_outlined,
+                  title: 'Security',
+                  subtitle: 'Connect or remove your authenticator app',
+                  onTap: () => _open(const SecurityScreen()),
                 ),
                 const SizedBox(height: 22),
                 const Text('TODAY AT A GLANCE', style: AppTheme.eyebrow),

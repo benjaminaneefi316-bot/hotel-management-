@@ -4,12 +4,13 @@ import 'package:provider/provider.dart';
 import '../state/session_controller.dart';
 import 'catalog_screen.dart';
 import 'dashboard_screen.dart';
+import 'hotel_screen.dart';
 import 'my_bookings_screen.dart';
 import 'profile_screen.dart';
 import 'rooms_screen.dart';
 
 /// The signed-in experience. Staff get a dashboard and a room list; guests get
-/// the booking catalogue. Both share "bookings" and "profile".
+/// the booking catalogue. Both share the hotel website, bookings and profile.
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
 
@@ -35,19 +36,38 @@ class _HomeShellState extends State<HomeShell> {
         const NavigationDestination(
           icon: Icon(Icons.hotel_outlined),
           selectedIcon: Icon(Icons.hotel),
-          label: 'Stay',
+          label: 'Hotel',
         ),
       if (isStaff)
         const NavigationDestination(
           icon: Icon(Icons.meeting_room_outlined),
           selectedIcon: Icon(Icons.meeting_room),
           label: 'Rooms',
+        )
+      else
+        const NavigationDestination(
+          icon: Icon(Icons.search_outlined),
+          selectedIcon: Icon(Icons.search),
+          label: 'Stay',
         ),
-      const NavigationDestination(
-        icon: Icon(Icons.event_note_outlined),
-        selectedIcon: Icon(Icons.event_note),
-        label: 'Bookings',
-      ),
+      if (isStaff)
+        const NavigationDestination(
+          icon: Icon(Icons.event_note_outlined),
+          selectedIcon: Icon(Icons.event_note),
+          label: 'Bookings',
+        )
+      else
+        const NavigationDestination(
+          icon: Icon(Icons.event_note_outlined),
+          selectedIcon: Icon(Icons.event_note),
+          label: 'Bookings',
+        ),
+      if (isStaff)
+        const NavigationDestination(
+          icon: Icon(Icons.storefront_outlined),
+          selectedIcon: Icon(Icons.storefront),
+          label: 'Hotel',
+        ),
       const NavigationDestination(
         icon: Icon(Icons.person_outline),
         selectedIcon: Icon(Icons.person),
@@ -56,9 +76,10 @@ class _HomeShellState extends State<HomeShell> {
     ];
 
     final pages = <Widget>[
-      if (isStaff) const DashboardScreen() else const CatalogScreen(),
-      if (isStaff) const RoomsScreen(),
+      if (isStaff) const DashboardScreen() else const HotelScreen(),
+      if (isStaff) const RoomsScreen() else const CatalogScreen(),
       const MyBookingsScreen(),
+      if (isStaff) const HotelScreen(),
       const ProfileScreen(),
     ];
 

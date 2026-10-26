@@ -14,7 +14,11 @@ import 'package:azure_bay_mobile/src/models/booking.dart';
 import 'package:azure_bay_mobile/src/models/front_desk.dart';
 import 'package:azure_bay_mobile/src/models/room_type.dart';
 import 'package:azure_bay_mobile/src/screens/dashboard_screen.dart';
+import 'package:azure_bay_mobile/src/screens/hotel_screen.dart';
 import 'package:azure_bay_mobile/src/screens/login_screen.dart';
+import 'package:azure_bay_mobile/src/screens/payments_screen.dart';
+import 'package:azure_bay_mobile/src/screens/security_screen.dart';
+import 'package:azure_bay_mobile/src/screens/users_screen.dart';
 import 'package:azure_bay_mobile/src/state/session_controller.dart';
 import 'package:azure_bay_mobile/src/theme/app_theme.dart';
 
@@ -299,6 +303,205 @@ void main() {
       expect(find.text('Front desk'), findsOneWidget);
       expect(find.text('Mei Tanaka'), findsOneWidget);
       expect(find.text('Check in'), findsOneWidget);
+    });
+  });
+
+  group('New feature screens', () {
+    late ApiClient api;
+
+    setUp(() {
+      api = ApiClient(
+        baseUrl: 'https://example.test/api',
+        httpClient: MockClient((request) async {
+          final path = request.url.path;
+          final headers = {'content-type': 'application/json'};
+
+          if (path.endsWith('/two-factor')) {
+            return http.Response(
+              jsonEncode({'enabled': false, 'channel': 'email'}),
+              200,
+              headers: headers,
+            );
+          }
+
+          if (path.endsWith('/users/roles')) {
+            return http.Response(
+              jsonEncode({
+                'data': [
+                  {
+                    'name': 'admin',
+                    'label': 'Owner / admin',
+                    'description': 'Full access',
+                  },
+                  {
+                    'name': 'receptionist',
+                    'label': 'Receptionist',
+                    'description': 'Front desk',
+                  },
+                ],
+              }),
+              200,
+              headers: headers,
+            );
+          }
+
+          if (path.endsWith('/users')) {
+            return http.Response(
+              jsonEncode({
+                'data': [
+                  {
+                    'id': 7,
+                    'name': 'Ada Okafor',
+                    'username': 'ada',
+                    'email': 'ada@example.test',
+                    'status': 'active',
+                    'status_label': 'Active',
+                    'roles': ['admin'],
+                    'role_labels': ['Owner / admin'],
+                    'two_factor_enabled': true,
+                  },
+                ],
+              }),
+              200,
+              headers: headers,
+            );
+          }
+
+          if (path.endsWith('/payments/summary')) {
+            return http.Response(
+              jsonEncode({
+                'paid_total': 420.0,
+                'pending_total': 80.0,
+                'refunded_total': 0.0,
+                'currency': 'USD',
+                'counts': {'paid': 1, 'pending': 1},
+              }),
+              200,
+              headers: headers,
+            );
+          }
+
+          if (path.endsWith('/payments')) {
+            return http.Response(
+              jsonEncode({
+                'data': [
+                  {
+                    'id': 1,
+                    'amount': 420.0,
+                    'currency': 'USD',
+                    'status': 'paid',
+                    'status_label': 'Paid',
+                    'method': 'card',
+                    'method_label': 'Card',
+                    'booking_reference': 'AB-1001',
+                    'guest_name': 'Ada Okafor',
+                  },
+                ],
+              }),
+              200,
+              headers: headers,
+            );
+          }
+
+          if (path.endsWith('/hotel')) {
+            return http.Response(
+              jsonEncode({
+                'hotel': {
+                  'name': 'Azure Bay Hotel',
+                  'tagline': 'A quieter kind of luxury',
+                  'description': 'Seafront rooms and warm service.',
+                  'short_description': 'Seafront rooms in the old town.',
+                  'address': '12 Harbour Road',
+                  'phone': '+1 555 0100',
+                  'email': 'stay@example.test',
+                  'check_in_time': '15:00',
+                  'check_out_time': '11:00',
+                  'hero_image': '',
+                  'rating': 4.8,
+                  'established': 1998,
+                },
+                'stats': [
+                  {'value': '6', 'label': 'Room types'},
+                ],
+                'amenities': [
+                  {
+                    'icon': 'pool',
+                    'title': 'Sea-view pool',
+                    'description': 'Open from sunrise to late.',
+                  },
+                ],
+                'gallery': [],
+                'highlights': [],
+                'room_types': [],
+                'featured_room_types': [],
+              }),
+              200,
+              headers: headers,
+            );
+          }
+
+          return http.Response('{}', 200, headers: headers);
+        }),
+      );
+    });
+
+    Widget host(Widget child) {
+      return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<SessionController>(
+            create: (_) => SessionController(AuthRepository(api: api)),
+          ),
+          Provider<HotelRepository>(create: (_) => HotelRepository(api)),
+        ],
+        child: MaterialApp(theme: AppTheme.light(), home: child),
+      );
+    }
+
+    testWidgets('security screen invites an authenticator setup',
+        (tester) async {
+      await tester.pumpWidget(host(const SecurityScreen()));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Extra protection is off'), findsOneWidget);
+      expect(find.text('Connect an authenticator app'), findsOneWidget);
+    });
+
+    testWidgets('users screen lists accounts with their roles',
+        (tester) async {
+      await tester.pumpWidget(host(const UsersScreen()));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Ada Okafor'), findsOneWidget);
+      expect(find.text('@ada · ada@example.test'), findsOneWidget);
+      expect(find.text('Owner / admin'), findsOneWidget);
+      expect(find.text('New user'), findsOneWidget);
+    });
+
+    testWidgets('payments screen shows totals and the ledger', (tester) async {
+      await tester.pumpWidget(host(const PaymentsScreen()));
+      await tester.pumpAndSettle();
+
+      expect(find.text('COLLECTED'), findsOneWidget);
+      expect(find.text('AWAITING PAYMENT'), findsOneWidget);
+      expect(find.text('AB-1001 · Ada Okafor · Card'), findsOneWidget);
+      expect(find.text('\$420.00'), findsWidgets);
+    });
+
+    testWidgets('hotel screen tells the same story as the website',
+        (tester) async {
+      await tester.pumpWidget(host(const HotelScreen()));
+      await tester.pumpAndSettle();
+
+      expect(find.text('A quieter kind of luxury'), findsOneWidget);
+
+      await tester.scrollUntilVisible(find.text('FACILITIES'), 250);
+      expect(find.text('FACILITIES'), findsOneWidget);
+
+      await tester.scrollUntilVisible(find.text('Sea-view pool'), 250);
+      expect(find.text('Sea-view pool'), findsOneWidget);
+
+      await tester.scrollUntilVisible(find.text('Contact the hotel'), 250);
+      expect(find.text('Contact the hotel'), findsOneWidget);
     });
   });
 }

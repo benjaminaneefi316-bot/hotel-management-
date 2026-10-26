@@ -201,31 +201,38 @@ class KpiTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // `.kpi-card` on the website: a gold rule down the left edge and a serif
-    // figure.
+    // figure. The rule is painted inside the rounded card because a border with
+    // different edge colours cannot be combined with a border radius.
     final content = Container(
-      padding: const EdgeInsets.all(14),
-      decoration: AppTheme.panel().copyWith(
-        border: const Border(
-          left: BorderSide(color: AppTheme.gold, width: 4),
-          top: BorderSide(color: AppTheme.border),
-          right: BorderSide(color: AppTheme.border),
-          bottom: BorderSide(color: AppTheme.border),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      clipBehavior: Clip.antiAlias,
+      decoration: AppTheme.panel(),
+      child: Stack(
         children: [
-          Icon(icon, color: AppTheme.gold, size: 22),
-          const SizedBox(height: 10),
-          Text(value, style: AppTheme.display(24, weight: FontWeight.w700)),
-          const SizedBox(height: 4),
-          Text(
-            label.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.2,
-              color: AppTheme.muted,
+          const Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: SizedBox(width: 4, child: ColoredBox(color: AppTheme.gold)),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 14, 14, 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(icon, color: AppTheme.gold, size: 22),
+                const SizedBox(height: 10),
+                Text(value, style: AppTheme.display(24, weight: FontWeight.w700)),
+                const SizedBox(height: 4),
+                Text(
+                  label.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.2,
+                    color: AppTheme.muted,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

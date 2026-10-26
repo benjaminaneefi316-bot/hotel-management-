@@ -22,10 +22,12 @@ use Illuminate\View\View;
  *               closing the tab simply discards the attempt.
  *   2. confirm- the user proves they can read a live code off the app. Only
  *               now is the secret saved and the account switched over.
- *   3. disable- an account can be moved back to emailed codes at any time.
+ *   3. disable- an account can be switched back to password-only at any time.
  *
- * Until step 2 completes, the account keeps using emailed codes exactly as
- * before - there is no state in which a half-finished setup blocks a login.
+ * Until step 2 completes, the account is left exactly as it was - there is no
+ * state in which a half-finished setup blocks a login. Removing the app turns
+ * the second factor off rather than falling back to email: the production
+ * mailer is `log`, so an emailed code could not reach anybody.
  */
 final class TwoFactorSetupController extends Controller
 {
@@ -148,7 +150,7 @@ final class TwoFactorSetupController extends Controller
             ->with('status', 'Authenticator app connected. Future sign-ins will ask for its code.');
     }
 
-    /** Step 3: switch back to emailed codes and forget the secret. */
+    /** Step 3: switch the second factor off and forget the secret. */
     public function destroy(Request $request): RedirectResponse
     {
         $user = $request->user();
@@ -156,6 +158,7 @@ final class TwoFactorSetupController extends Controller
         $user->forceFill([
             'two_factor_secret' => null,
             'two_factor_confirmed_at' => null,
+            'two_factor_enabled' => false,
         ])->save();
 
         $request->session()->forget(['2fa.pending_secret', '2fa.pending_started_at']);
@@ -163,10 +166,10 @@ final class TwoFactorSetupController extends Controller
         $this->audit->success(
             'auth.2fa.enrol.removed',
             'security',
-            sprintf('Authenticator app removed for "%s"; emailed codes are in use.', $user->username),
+            sprintf('Authenticator app removed for "%s"; two-factor authentication is off.', $user->username),
             $user,
         );
 
-        return back()->with('status', 'Authenticator app removed. Sign-in codes are emailed again.');
+        return back()->with('status', 'Authenticator app removed. Sign-in will no longer ask for a code.');
     }
 }

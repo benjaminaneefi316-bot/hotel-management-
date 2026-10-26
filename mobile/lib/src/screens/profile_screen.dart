@@ -1,9 +1,19 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../state/session_controller.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_widgets.dart';
+import 'hotel_screen.dart';
+import 'payments_screen.dart';
+import 'security_screen.dart';
+import 'users_screen.dart';
+
+void _open(BuildContext context, Widget screen) {
+  Navigator.of(context).push(
+    MaterialPageRoute<void>(builder: (_) => screen),
+  );
+}
 
 /// The signed-in user's own details plus sign-out.
 class ProfileScreen extends StatelessWidget {
@@ -76,7 +86,7 @@ class ProfileScreen extends StatelessWidget {
                   _Row(
                     icon: Icons.alternate_email,
                     label: 'Email',
-                    value: user?.email ?? 'â€”',
+                    value: user?.email ?? '-',
                   ),
                   if (user?.guestProfileId != null) ...[
                     const Divider(height: 20),
@@ -89,6 +99,43 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(height: 24),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text('SETTINGS & SHORTCUTS', style: AppTheme.eyebrow),
+            ),
+            const SizedBox(height: 10),
+            ActionTile(
+              icon: Icons.verified_user_outlined,
+              title: 'Security',
+              subtitle: 'Authenticator app and sign-in protection',
+              onTap: () => _open(context, const SecurityScreen()),
+            ),
+            const SizedBox(height: 10),
+            ActionTile(
+              icon: Icons.storefront_outlined,
+              title: 'Hotel website',
+              subtitle: 'Rooms, gallery and contact details',
+              onTap: () => _open(context, const HotelScreen()),
+            ),
+            if (user?.isStaff ?? false) ...[
+              const SizedBox(height: 10),
+              ActionTile(
+                icon: Icons.payments_outlined,
+                title: 'Payments',
+                subtitle: 'Takings, pending balances and refunds',
+                onTap: () => _open(context, const PaymentsScreen()),
+              ),
+            ],
+            if (user?.isAdmin ?? false) ...[
+              const SizedBox(height: 10),
+              ActionTile(
+                icon: Icons.manage_accounts_outlined,
+                title: 'Users',
+                subtitle: 'Staff and guest accounts',
+                onTap: () => _open(context, const UsersScreen()),
+              ),
+            ],
             const SizedBox(height: 24),
             OutlinedButton.icon(
               onPressed: session.busy
