@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:provider/provider.dart';
 
 import 'package:azure_bay_mobile/src/api/api_client.dart';
@@ -9,6 +13,7 @@ import 'package:azure_bay_mobile/src/models/app_user.dart';
 import 'package:azure_bay_mobile/src/models/booking.dart';
 import 'package:azure_bay_mobile/src/models/front_desk.dart';
 import 'package:azure_bay_mobile/src/models/room_type.dart';
+import 'package:azure_bay_mobile/src/screens/dashboard_screen.dart';
 import 'package:azure_bay_mobile/src/screens/login_screen.dart';
 import 'package:azure_bay_mobile/src/state/session_controller.dart';
 import 'package:azure_bay_mobile/src/theme/app_theme.dart';
@@ -194,6 +199,106 @@ void main() {
       expect(day.departures.single.stayId, 77);
       expect(day.departures.single.guest?.fullName, 'Mei Tanaka');
       expect(day.isEmpty, isFalse);
+    });
+  });
+
+  group('Staff dashboard', () {
+    late ApiClient api;
+
+    Map<String, dynamic> booking(int id, String status, String label) => {
+          'id': id,
+          'reference': 'AB-$id',
+          'status': status,
+          'status_label': label,
+          'check_in_date': '2026-10-26',
+          'check_out_date': '2026-10-28',
+          'nights': 2,
+          'adults': 2,
+          'children': 0,
+          'total_amount': 360,
+          'paid_amount': 100,
+          'balance': 260,
+          'can_cancel': false,
+          'can_check_in': status == 'confirmed',
+          'can_confirm': status == 'pending',
+          'guest': {'full_name': 'Mei Tanaka'},
+          'rooms': [
+            {'id': 1, 'room_number': '101', 'rate': 180, 'room_type': 'Classic'},
+          ],
+          'payments': [],
+        };
+
+    setUp(() {
+      api = ApiClient(
+        baseUrl: 'https://example.test/api',
+        httpClient: MockClient((request) async {
+          final path = request.url.path;
+          final headers = {'content-type': 'application/json'};
+
+          if (path.endsWith('/dashboard/summary')) {
+            return http.Response(
+              jsonEncode({
+                'date': '2026-10-26',
+                'kpi': {
+                  'arrivals_today': 1,
+                  'departures_today': 0,
+                  'in_house': 2,
+                  'occupancy_percent': 50.0,
+                  'revenue_month': 1234.0,
+                  'pending_bookings': 1,
+                },
+                'rooms': [
+                  {'status': 'available', 'label': 'Available', 'count': 10},
+                ],
+              }),
+              200,
+              headers: headers,
+            );
+          }
+
+          if (path.endsWith('/front-desk')) {
+            return http.Response(
+              jsonEncode({
+                'date': '2026-10-26',
+                'arrivals': [booking(1, 'confirmed', 'Confirmed')],
+                'departures': [],
+              }),
+              200,
+              headers: headers,
+            );
+          }
+
+          return http.Response('{}', 200, headers: headers);
+        }),
+      );
+    });
+
+    Widget host(Widget child) {
+      return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<SessionController>(
+            create: (_) => SessionController(AuthRepository(api: api)),
+          ),
+          Provider<HotelRepository>(create: (_) => HotelRepository(api)),
+        ],
+        child: MaterialApp(theme: AppTheme.light(), home: child),
+      );
+    }
+
+    testWidgets('shows large actions and opens the front desk', (tester) async {
+      await tester.pumpWidget(host(const DashboardScreen()));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Open front desk'), findsOneWidget);
+      expect(find.text('All bookings'), findsOneWidget);
+      expect(find.text('Rooms'), findsOneWidget);
+
+      await tester.tap(find.text('Open front desk'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Front desk'), findsOneWidget);
+      expect(find.text('Mei Tanaka'), findsOneWidget);
+      expect(find.text('Check in'), findsOneWidget);
     });
   });
 }
